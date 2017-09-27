@@ -10,4 +10,4 @@ License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 Imports: Rcpp (>= 0.12.12)
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppArmadillo, RcppParallel

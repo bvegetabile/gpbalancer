@@ -1,3 +1,11 @@
 exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
+
+# Added the below line... Ensures RcppParallel works
+# Removes the following error:
+#
+#     Symbol not found: __ZN3tbb4task13note_affinityEt
+#
+
+importFrom(RcppParallel, RcppParallelLibs)
 useDynLib(gpbalancer, .registration = TRUE)
