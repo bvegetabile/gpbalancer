@@ -20,18 +20,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// construct_poly
-NumericMatrix construct_poly(NumericMatrix X, double p, double sig0, double sig1, double noise);
-RcppExport SEXP _gpbalancer_construct_poly(SEXP XSEXP, SEXP pSEXP, SEXP sig0SEXP, SEXP sig1SEXP, SEXP noiseSEXP) {
+// par_ep
+List par_ep(arma::vec y, arma::mat cov_matrix, double tol, int max_iters, bool verbose);
+RcppExport SEXP _gpbalancer_par_ep(SEXP ySEXP, SEXP cov_matrixSEXP, SEXP tolSEXP, SEXP max_itersSEXP, SEXP verboseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< double >::type sig0(sig0SEXP);
-    Rcpp::traits::input_parameter< double >::type sig1(sig1SEXP);
-    Rcpp::traits::input_parameter< double >::type noise(noiseSEXP);
-    rcpp_result_gen = Rcpp::wrap(construct_poly(X, p, sig0, sig1, noise));
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cov_matrix(cov_matrixSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iters(max_itersSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_ep(y, cov_matrix, tol, max_iters, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
+// seq_ep
+List seq_ep(arma::vec y, arma::mat cov_matrix, double tol, int max_iters, bool verbose);
+RcppExport SEXP _gpbalancer_seq_ep(SEXP ySEXP, SEXP cov_matrixSEXP, SEXP tolSEXP, SEXP max_itersSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type cov_matrix(cov_matrixSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iters(max_itersSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(seq_ep(y, cov_matrix, tol, max_iters, verbose));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -46,36 +61,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// par_sq_exp
-arma::mat par_sq_exp(arma::mat design_x, arma::vec vec_theta, double sig_noise);
-RcppExport SEXP _gpbalancer_par_sq_exp(SEXP design_xSEXP, SEXP vec_thetaSEXP, SEXP sig_noiseSEXP) {
+// par_sqexp
+arma::mat par_sqexp(arma::mat design_x, arma::vec vec_theta, double sig_noise);
+RcppExport SEXP _gpbalancer_par_sqexp(SEXP design_xSEXP, SEXP vec_thetaSEXP, SEXP sig_noiseSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type design_x(design_xSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type vec_theta(vec_thetaSEXP);
     Rcpp::traits::input_parameter< double >::type sig_noise(sig_noiseSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_sq_exp(design_x, vec_theta, sig_noise));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpp_hello
-List rcpp_hello();
-RcppExport SEXP _gpbalancer_rcpp_hello() {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpp_hello());
+    rcpp_result_gen = Rcpp::wrap(par_sqexp(design_x, vec_theta, sig_noise));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
     {"_gpbalancer_construct_sqexp", (DL_FUNC) &_gpbalancer_construct_sqexp, 4},
-    {"_gpbalancer_construct_poly", (DL_FUNC) &_gpbalancer_construct_poly, 5},
+    {"_gpbalancer_par_ep", (DL_FUNC) &_gpbalancer_par_ep, 5},
+    {"_gpbalancer_seq_ep", (DL_FUNC) &_gpbalancer_seq_ep, 5},
     {"_gpbalancer_timesTwo", (DL_FUNC) &_gpbalancer_timesTwo, 1},
-    {"_gpbalancer_par_sq_exp", (DL_FUNC) &_gpbalancer_par_sq_exp, 3},
-    {"_gpbalancer_rcpp_hello", (DL_FUNC) &_gpbalancer_rcpp_hello, 0},
+    {"_gpbalancer_par_sqexp", (DL_FUNC) &_gpbalancer_par_sqexp, 3},
     {NULL, NULL, 0}
 };
 

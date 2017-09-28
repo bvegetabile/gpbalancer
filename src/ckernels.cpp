@@ -34,33 +34,33 @@ NumericMatrix construct_sqexp(NumericMatrix X, NumericMatrix M, double sig, doub
   return(cov_mat);
 }
 
-// [[Rcpp::export]]
-NumericMatrix construct_poly(NumericMatrix X, double p, double sig0, double sig1, double noise) {
-  int N = X.nrow();
-  int D = X.ncol();
-
-  NumericMatrix cov_mat(N,N);
-  double top_sum;
-  double l_sum;
-  double r_sum;
-  double normval;
-  for(int i = 0; i < N; i++){
-    for(int j = i; j < N; j++){
-      top_sum = sig0;
-      l_sum = sig0;
-      r_sum = sig0;
-      for(int d1 = 0; d1 < D; d1++){
-        top_sum += X(i, d1) * X(j, d1);
-        l_sum += X(i, d1) * X(i, d1);
-        r_sum += X(j, d1) * X(j, d1);
-      }
-      normval = top_sum / (sqrt(l_sum)*sqrt(r_sum));
-      cov_mat(i,j) = sig1 * pow(normval,p);
-      cov_mat(j,i) = cov_mat(i,j);
-    }
-  }
-  for(int k = 0; k < N; k++){
-    cov_mat(k,k) += noise;
-  }
-  return(cov_mat);
-}
+// // [[Rcpp::export]]
+// NumericMatrix construct_poly(NumericMatrix X, double p, double sig0, double sig1, double noise) {
+//   int N = X.nrow();
+//   int D = X.ncol();
+//
+//   NumericMatrix cov_mat(N,N);
+//   double top_sum;
+//   double l_sum;
+//   double r_sum;
+//   double normval;
+//   for(int i = 0; i < N; i++){
+//     for(int j = i; j < N; j++){
+//       top_sum = sig0;
+//       l_sum = sig0;
+//       r_sum = sig0;
+//       for(int d1 = 0; d1 < D; d1++){
+//         top_sum += X(i, d1) * X(j, d1);
+//         l_sum += X(i, d1) * X(i, d1);
+//         r_sum += X(j, d1) * X(j, d1);
+//       }
+//       normval = top_sum / (sqrt(l_sum)*sqrt(r_sum));
+//       cov_mat(i,j) = sig1 * pow(normval,p);
+//       cov_mat(j,i) = cov_mat(i,j);
+//     }
+//   }
+//   for(int k = 0; k < N; k++){
+//     cov_mat(k,k) += noise;
+//   }
+//   return(cov_mat);
+// }

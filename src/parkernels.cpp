@@ -56,9 +56,9 @@ struct ConstructSqExpKernel : public Worker {
 };
 
 // [[Rcpp::export]]
-arma::mat par_sq_exp(arma::mat design_x,
-                     arma::vec vec_theta,
-                     double sig_noise = 1e-6) {
+arma::mat par_sqexp(arma::mat design_x,
+                    arma::vec vec_theta,
+                    double sig_noise = 1e-6) {
 
   // allocate the matrix we will return
   arma::mat cov_mat(design_x.n_rows, design_x.n_rows);

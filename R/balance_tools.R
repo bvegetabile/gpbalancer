@@ -20,19 +20,10 @@
 # --- bal_plt_cont_cdf plots the conditional emp. cdf for treatment groups
 #-------------------------------------------------------------------------------
 
-ht_est <- function(y_obs,   # vector of observed responses
-                   ta,     # binary vector of treatment assignments (0,1)
-                   est_ps){# vector of estimated propensity scores
-  left_side <- sum(ta * y_obs / est_ps) / sum(ta/est_ps)
-  right_side <- sum((1-ta) * y_obs / (1-est_ps)) / sum((1-ta)/(1-est_ps))
-  tau <- left_side - right_side
-  return(tau)
-}
-
 bal_stats <- function(var_data,
-                     treat_ind,
-                     datatype = 'continuous',
-                     wts=rep(1, length(treat_ind))){
+                      treat_ind,
+                      datatype = 'continuous',
+                      wts=rep(1, length(treat_ind))){
   #-----------------------------------------------------------------------------
   # bal_stats is a function which is used to assess covariate balance for a
   # single variable.
@@ -174,11 +165,11 @@ bal_table <- function(dataset,
 }
 
 
-overall_bal <- function(dataset,
-                        col_ind,
-                        treat_ind,
-                        wts = rep(1, length(treat_ind)),
-                        max_uniq=5){
+.mom_bal <- function(dataset,
+                     col_ind,
+                     treat_ind,
+                     wts = rep(1, length(treat_ind)),
+                     max_uniq=5){
 
   treat_ind <- as.logical(treat_ind)
   outtable <- c()
@@ -209,11 +200,11 @@ overall_bal <- function(dataset,
   return(outbal)
 }
 
-overall_bal_sq <- function(dataset,
-                           col_ind,
-                           treat_ind,
-                           wts = rep(1, length(treat_ind)),
-                           max_uniq=5){
+.mom_sq_bal <- function(dataset,
+                        col_ind,
+                        treat_ind,
+                        wts = rep(1, length(treat_ind)),
+                        max_uniq=5){
 
   treat_ind <- as.logical(treat_ind)
   outtable <- c()
@@ -244,7 +235,7 @@ overall_bal_sq <- function(dataset,
   return(outbal)
 }
 
-wtd_ecdf <- function (var_data, wts) {
+.wtd_ecdf <- function (var_data, wts) {
   #-----------------------------------------------------------------------------
   # wtd_ecdf is a modification of the ecdf() function in base R.  It modifies
   # the function to be able to incorporate weights.  This is to visualize
@@ -272,7 +263,7 @@ wtd_ecdf <- function (var_data, wts) {
   rval
 }
 
-dens_table <- function(var_data, treat_data){
+.dens_table <- function(var_data, treat_data){
   #-----------------------------------------------------------------------------
   # dens_table creates a contingency table of a covariate and treatment.
   # - Provides the conditional density based upon treatment assignment after
@@ -289,122 +280,134 @@ dens_table <- function(var_data, treat_data){
   rs <- rowSums(outro)
   return(outro / matrix(rs,nrow=nt,ncol=nc))
 }
+#
+# bal_plt_cat_pdf <- function(var_data,
+#                             treat_data,
+#                             spread=0.5,
+#                             vertoffset=0.05,
+#                             toptitle="Conditional Distribution of Covariate",
+#                             legendpos='topright',
+#                             col_0 = rgb(0,0,0.75,0.75),
+#                             col_1 = rgb(0,0.75,0,0.75)){
+#   discrete_dens <- dens_table(var_data, treat_data)
+#   col_list <- c(col_0, col_1)
+#   nt <- nrow(discrete_dens)
+#   t_names <- row.names(discrete_dens)
+#
+#   ncov <- ncol(discrete_dens)
+#   cov_names <- colnames(discrete_dens)
+#
+#   xspots <- seq(0.5, ncov-0.5, 1)
+#   xdiffs <- seq(0, spread, length.out = nt) - spread/2
+#   ymax <- min(1.1, max(discrete_dens)+vertoffset)
+#
+#   plot(0, xlim=c(0, ncov), ylim=c(0, ymax),
+#        pch=19, col=rgb(0,0,0,0.0),
+#        xaxs="i", yaxs='i',
+#        xlab="Category", ylab='Density', axes=F,
+#        main=toptitle)
+#   for(i in 1:nt){
+#     for(j in 1:ncov){
+#       lines(rep(xspots[j] + xdiffs[i],2),
+#             c(0, discrete_dens[i,j]),
+#             lty=1, col=col_list[i])
+#     }
+#     points(xspots + xdiffs[i],
+#            discrete_dens[i,],
+#            pch=19, col=col_list[i])
+#     text(xspots + xdiffs[i],
+#          discrete_dens[i,],
+#          labels = round(discrete_dens[i,],2), pos=3)
+#   }
+#   abline(v=0:ncov)
+#   axis(1, xspots, cov_names)
+#   axis(2, seq(0,1,0.1), las=1)
+#   box()
+#   legend(legendpos, legend = c('Control', 'Treated'),
+#          lwd=2, lty=1, col=col_list)
+# }
+#
+# bal_plt_cont_pdf <- function(var_data,
+#                              treat_data,
+#                              var_name = 'Covariate Name',
+#                              toptitle = "Conditional Distributions of Covariate",
+#                              legendpos = 'topright',
+#                              treat_names = c('Treated', 'Control'),
+#                              adj_bw = 1,
+#                              col_c = rgb(0,0,0.75,0.75),
+#                              col_t = rgb(0,0.75,0,0.75)){
+#   treat_data <- as.logical(treat_data)
+#   var_range <- range(var_data)
+#   var_pts <- seq(var_range[1], var_range[2], 0.005)
+#   dens_t <- approxfun(density(var_data[treat_data],
+#                               adjust = adj_bw,
+#                               from = var_range[1], to = var_range[2]))
+#   dens_c <- approxfun(density(var_data[!treat_data],
+#                               adjust = adj_bw,
+#                               from = var_range[1], to = var_range[2]))
+#   y_max <- max(dens_t(var_pts), dens_c(var_pts))
+#   y_max <- y_max + y_max/100
+#   plot(var_pts, dens_t(var_pts),
+#        xlim = var_range, ylim=c(0, y_max),
+#        xlab=var_name, ylab = 'Density',
+#        type='l', col=col_t, lwd=3,
+#        main=toptitle)
+#   abline(v=var_range, lty=3)
+#   lines(var_pts, dens_c(var_pts),
+#        col=col_c, lwd=3, xlab=var_name,
+#        main=toptitle)
+#   legend(legendpos, treat_names, lty=1, lwd=3, col=c(col_t, col_c))
+# }
+#
+# bal_plt_cont_cdf <- function(var_data,
+#                              treat_data,
+#                              wts = rep(1, length(treat_data)),
+#                              var_name = 'Covariate Name',
+#                              toptitle = "Conditional Emp. CDF of Covariate",
+#                              legendpos = 'bottomright',
+#                              treat_names = c('Treated', 'Control'),
+#                              adj_bw = 1,
+#                              col_c = rgb(0,0,0.75,0.75),
+#                              col_t = rgb(0,0.75,0,0.75)){
+#   treat_data <- as.logical(treat_data)
+#   var_range <- range(var_data)
+#   var_pts <- seq(var_range[1], var_range[2], 0.005)
+#   wecdf_t <- wtd_ecdf(var_data[treat_data], wts[treat_data])
+#   wecdf_c <- wtd_ecdf(var_data[!treat_data], wts[!treat_data])
+#   plot(var_pts, wecdf_t(var_pts),
+#        xlim = var_range, ylim=c(0, 1),
+#        xlab=var_name, ylab = 'Cumulative Distribution Function',
+#        type='l', col=col_t, lwd=3,
+#        main=toptitle)
+#   abline(h=c(0,1), lty=3)
+#   abline(v=var_range, lty=3)
+#   lines(var_pts, wecdf_c(var_pts),
+#         col=col_c, lwd=3, xlab=var_name,
+#         main=toptitle)
+#   legend(legendpos, treat_names, lty=1, lwd=3, col=c(col_t, col_c))
+# }
 
-bal_plt_cat_pdf <- function(var_data,
-                            treat_data,
-                            spread=0.5,
-                            vertoffset=0.05,
-                            toptitle="Conditional Distribution of Covariate",
-                            legendpos='topright',
-                            col_0 = rgb(0,0,0.75,0.75),
-                            col_1 = rgb(0,0.75,0,0.75)){
-  discrete_dens <- dens_table(var_data, treat_data)
-  col_list <- c(col_0, col_1)
-  nt <- nrow(discrete_dens)
-  t_names <- row.names(discrete_dens)
 
-  ncov <- ncol(discrete_dens)
-  cov_names <- colnames(discrete_dens)
-
-  xspots <- seq(0.5, ncov-0.5, 1)
-  xdiffs <- seq(0, spread, length.out = nt) - spread/2
-  ymax <- min(1.1, max(discrete_dens)+vertoffset)
-
-  plot(0, xlim=c(0, ncov), ylim=c(0, ymax),
-       pch=19, col=rgb(0,0,0,0.0),
-       xaxs="i", yaxs='i',
-       xlab="Category", ylab='Density', axes=F,
-       main=toptitle)
-  for(i in 1:nt){
-    for(j in 1:ncov){
-      lines(rep(xspots[j] + xdiffs[i],2),
-            c(0, discrete_dens[i,j]),
-            lty=1, col=col_list[i])
-    }
-    points(xspots + xdiffs[i],
-           discrete_dens[i,],
-           pch=19, col=col_list[i])
-    text(xspots + xdiffs[i],
-         discrete_dens[i,],
-         labels = round(discrete_dens[i,],2), pos=3)
-  }
-  abline(v=0:ncov)
-  axis(1, xspots, cov_names)
-  axis(2, seq(0,1,0.1), las=1)
-  box()
-  legend(legendpos, legend = c('Control', 'Treated'),
-         lwd=2, lty=1, col=col_list)
-}
-
-bal_plt_cont_pdf <- function(var_data,
-                             treat_data,
-                             var_name = 'Covariate Name',
-                             toptitle = "Conditional Distributions of Covariate",
-                             legendpos = 'topright',
-                             treat_names = c('Treated', 'Control'),
-                             adj_bw = 1,
-                             col_c = rgb(0,0,0.75,0.75),
-                             col_t = rgb(0,0.75,0,0.75)){
-  treat_data <- as.logical(treat_data)
-  var_range <- range(var_data)
-  var_pts <- seq(var_range[1], var_range[2], 0.005)
-  dens_t <- approxfun(density(var_data[treat_data],
-                              adjust = adj_bw,
-                              from = var_range[1], to = var_range[2]))
-  dens_c <- approxfun(density(var_data[!treat_data],
-                              adjust = adj_bw,
-                              from = var_range[1], to = var_range[2]))
-  y_max <- max(dens_t(var_pts), dens_c(var_pts))
-  y_max <- y_max + y_max/100
-  plot(var_pts, dens_t(var_pts),
-       xlim = var_range, ylim=c(0, y_max),
-       xlab=var_name, ylab = 'Density',
-       type='l', col=col_t, lwd=3,
-       main=toptitle)
-  abline(v=var_range, lty=3)
-  lines(var_pts, dens_c(var_pts),
-       col=col_c, lwd=3, xlab=var_name,
-       main=toptitle)
-  legend(legendpos, treat_names, lty=1, lwd=3, col=c(col_t, col_c))
-}
-
-bal_plt_cont_cdf <- function(var_data,
-                             treat_data,
-                             wts = rep(1, length(treat_data)),
-                             var_name = 'Covariate Name',
-                             toptitle = "Conditional Emp. CDF of Covariate",
-                             legendpos = 'bottomright',
-                             treat_names = c('Treated', 'Control'),
-                             adj_bw = 1,
-                             col_c = rgb(0,0,0.75,0.75),
-                             col_t = rgb(0,0.75,0,0.75)){
-  treat_data <- as.logical(treat_data)
-  var_range <- range(var_data)
-  var_pts <- seq(var_range[1], var_range[2], 0.005)
-  wecdf_t <- wtd_ecdf(var_data[treat_data], wts[treat_data])
-  wecdf_c <- wtd_ecdf(var_data[!treat_data], wts[!treat_data])
-  plot(var_pts, wecdf_t(var_pts),
-       xlim = var_range, ylim=c(0, 1),
-       xlab=var_name, ylab = 'Cumulative Distribution Function',
-       type='l', col=col_t, lwd=3,
-       main=toptitle)
-  abline(h=c(0,1), lty=3)
-  abline(v=var_range, lty=3)
-  lines(var_pts, wecdf_c(var_pts),
-        col=col_c, lwd=3, xlab=var_name,
-        main=toptitle)
-  legend(legendpos, treat_names, lty=1, lwd=3, col=c(col_t, col_c))
-}
-
-
-ks_avg_test <- function(X, TA, ps=rep(1/length(X), length(X)), n_pts=1000){
+.ks_avg_test <- function(X, TA, ps=rep(1/length(X), length(X)), n_pts=1000){
   xmin <- min(X)
   xmax <- max(X)
   int_pts <- seq(xmin, xmax, length.out = n_pts)
   t_wts <- (TA / ps) / sum(TA / ps)
   c_wts <- ((1-TA) / (1-ps)) / sum(((1-TA) / (1-ps)))
-  t_fn <- wtd_ecdf(X, wts = t_wts)
-  c_fn <- wtd_ecdf(X, wts = c_wts)
+  t_fn <- .wtd_ecdf(X, wts = t_wts)
+  c_fn <- .wtd_ecdf(X, wts = c_wts)
   return(mean(abs(t_fn(int_pts) - c_fn(int_pts))))
+}
+
+
+.ks_test <- function(X, TA, ps=rep(1/length(X), length(X)), n_pts=1000){
+  xmin <- min(X)
+  xmax <- max(X)
+  int_pts <- seq(xmin, xmax, length.out = n_pts)
+  t_wts <- (TA / ps) / sum(TA / ps)
+  c_wts <- ((1-TA) / (1-ps)) / sum(((1-TA) / (1-ps)))
+  t_fn <- .wtd_ecdf(X, wts = t_wts)
+  c_fn <- .wtd_ecdf(X, wts = c_wts)
+  return(max(abs(t_fn(int_pts) - c_fn(int_pts))))
 }
 

@@ -5,19 +5,19 @@ construct_sqexp <- function(X, M, sig, noise) {
     .Call(`_gpbalancer_construct_sqexp`, X, M, sig, noise)
 }
 
-construct_poly <- function(X, p, sig0, sig1, noise) {
-    .Call(`_gpbalancer_construct_poly`, X, p, sig0, sig1, noise)
+par_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
+    .Call(`_gpbalancer_par_ep`, y, cov_matrix, tol, max_iters, verbose)
+}
+
+seq_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
+    .Call(`_gpbalancer_seq_ep`, y, cov_matrix, tol, max_iters, verbose)
 }
 
 timesTwo <- function(x) {
     .Call(`_gpbalancer_timesTwo`, x)
 }
 
-par_sq_exp <- function(design_x, vec_theta, sig_noise = 1e-6) {
-    .Call(`_gpbalancer_par_sq_exp`, design_x, vec_theta, sig_noise)
-}
-
-rcpp_hello <- function() {
-    .Call(`_gpbalancer_rcpp_hello`)
+par_sqexp <- function(design_x, vec_theta, sig_noise = 1e-6) {
+    .Call(`_gpbalancer_par_sqexp`, design_x, vec_theta, sig_noise)
 }
 
