@@ -50,17 +50,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// timesTwo
-NumericVector timesTwo(NumericVector x);
-RcppExport SEXP _gpbalancer_timesTwo(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(timesTwo(x));
-    return rcpp_result_gen;
-END_RCPP
-}
 // par_sqexp
 arma::mat par_sqexp(arma::mat design_x, arma::vec vec_theta, double sig_noise);
 RcppExport SEXP _gpbalancer_par_sqexp(SEXP design_xSEXP, SEXP vec_thetaSEXP, SEXP sig_noiseSEXP) {
@@ -79,7 +68,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpbalancer_construct_sqexp", (DL_FUNC) &_gpbalancer_construct_sqexp, 4},
     {"_gpbalancer_par_ep", (DL_FUNC) &_gpbalancer_par_ep, 5},
     {"_gpbalancer_seq_ep", (DL_FUNC) &_gpbalancer_seq_ep, 5},
-    {"_gpbalancer_timesTwo", (DL_FUNC) &_gpbalancer_timesTwo, 1},
     {"_gpbalancer_par_sqexp", (DL_FUNC) &_gpbalancer_par_sqexp, 3},
     {NULL, NULL, 0}
 };

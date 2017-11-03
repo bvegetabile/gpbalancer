@@ -13,10 +13,6 @@ seq_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
     .Call(`_gpbalancer_seq_ep`, y, cov_matrix, tol, max_iters, verbose)
 }
 
-timesTwo <- function(x) {
-    .Call(`_gpbalancer_timesTwo`, x)
-}
-
 par_sqexp <- function(design_x, vec_theta, sig_noise = 1e-6) {
     .Call(`_gpbalancer_par_sqexp`, design_x, vec_theta, sig_noise)
 }
