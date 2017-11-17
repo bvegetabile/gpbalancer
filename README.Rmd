@@ -1,0 +1,37 @@
+---
+title: 'gpbalancer: Optimally Balanced Gaussian Process Propensity Score Estimation'
+author: "Brian Vegetabile"
+date: "11/17/2017"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# $\texttt{gpbalancer}$: an `R` Package for Optimally Balanced Gaussian Process Propensity Score Estimation
+
+Reference forthcoming...
+
+
+## Installing `gpbalancer`
+
+The package `devtools` is required to install this `R` package from this Github repository.  Install this package first if it is not already installed.
+
+```{r, echo=TRUE, eval=FALSE}
+install.packages('devtools', dependencies = TRUE)
+```
+
+Once that package has been installed, use the following to install `ccber`
+
+```{r, echo=TRUE, eval=FALSE}
+devtools::install_github('bvegetabile/gpbalancer')
+```
+
+Load the package to begin analysis!
+
+```{r, echo=TRUE, eval=T}
+library('gpbalancer')
+```
