@@ -39,7 +39,7 @@ library('gpbalancer')
 ## Example using `gpbalancer`
 
 ### Simulating data
-```{r, echo=TRUE, eval=T}
+```{r, echo=TRUE, eval=T, fig.width=10}
 set.seed(201711)
 n_obs <- 500
 pretreatment_cov <- rnorm(n_obs)
