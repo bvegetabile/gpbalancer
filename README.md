@@ -59,16 +59,16 @@ points(pretreatment_cov[!as.logical(treatment_assignment)],
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), pch=19, col=c(t_col, c_col), bg='white')
 
-plot(density(pretreatment_cov[as.logical(treatment_assignment)]),
+plot(density(pretreatment_cov[!as.logical(treatment_assignment)], adjust = 1.5),
      xlim=range(pretreatment_cov), 
-     type='l', lwd=3, col=t_col,
+     type='l', lwd=3, col=c_col,
      xlab='Pretreatment Covariate',
      ylab='Density',
-     main='Conditional Distributions of Covariate')
-lines(density(pretreatment_cov[!as.logical(treatment_assignment)]),
-     lwd=3, col=c_col)
+     main='Covariate Distributions Conditional Upon Treatment Type')
+lines(density(pretreatment_cov[as.logical(treatment_assignment)], adjust = 1.5),
+     lwd=3, col=t_col)
 abline(h=c(0,1), lty=3)
-legend('topleft', c('Treated', 'Control'), lty=1, col=c(t_col, c_col), bg='white')
+legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg='white')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
