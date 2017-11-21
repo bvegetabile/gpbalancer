@@ -132,3 +132,19 @@ legend('topleft',
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)
+
+Under these settings if we are attempting to model *τ* = *E*(*Y*<sup>*T* = 1</sup> − *Y*<sup>*T* = 0</sup>) without adjustment (i.e. $\\hat \\tau = E(Y^{obs} | T=1) - E(Y^{obs} | T=0))$, then the bias would be
+
+``` r
+hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
+original_bias <- (hat_tau-3)
+message('Estimated Treatment Effect: ', round(hat_tau,3))
+```
+
+    ## Estimated Treatment Effect: 3.611
+
+``` r
+message('              Orignal Bias: ', round(original_bias,3))
+```
+
+    ##               Orignal Bias: 0.611

@@ -155,5 +155,13 @@ legend('topleft',
        lty=c(1,1,NA,NA), lwd=c(3,3,NA,NA), pch=c(NA, NA, 19, 19), col=c(t_col, c_col), bg='white')
 ```
 
+Under these settings if we are attempting to model $\tau = E(Y^{T=1} - Y^{T=0})$ without adjustment (i.e. $\hat \tau = E(Y^{obs} | T=1) - E(Y^{obs} | T=0))$, then the bias would be 
+
+```{r, echo=TRUE, eval=T}
+hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
+original_bias <- (hat_tau-3)
+message('Estimated Treatment Effect: ', round(hat_tau,3))
+message('              Orignal Bias: ', round(original_bias,3))
+```
 
 
