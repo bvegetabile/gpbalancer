@@ -29,6 +29,14 @@ Example using `gpbalancer`
 
 ### Simulating data
 
+Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate *X* which is used to assign treatment, let
+*X*<sub>*i*</sub> ∼ *N*(0, 1)
+ Additionally, let the true propensity score be defined as follows,
+*e*(*X*<sub>*i*</sub>)=*P**r*(*T*<sub>*i*</sub> = 1|*X*<sub>*i*</sub>)=0.9 × *Φ*(2 \* *X*<sub>*i*</sub>)+0.05
+ where *Φ*() is the cumulative distribution of the Normal Distribution. Finally, we simulate treatment assignment such that,
+*T*<sub>*i*</sub>|*X*<sub>*i*</sub> ∼ *B**e**r**n**o**u**l**l**i*()
+ The true propensity score and observed treatment assignments are shown below.
+
 ``` r
 set.seed(201711)
 n_obs <- 500

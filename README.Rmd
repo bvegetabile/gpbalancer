@@ -38,7 +38,25 @@ library('gpbalancer')
 
 ## Example using `gpbalancer`
 
+
+
 ### Simulating data
+
+Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate $X$ which is used to assign treatment, let
+$$
+X_i \sim N(0,1)
+$$
+Additionally, let the true propensity score be defined as follows,
+$$
+e(X_i) = Pr(T_i = 1 | X_i) = 0.9 \times \Phi(2 * X_i) + 0.05
+$$
+where $\Phi()$ is the cumulative distribution of the Normal Distribution.  Finally, we simulate treatment assignment such that,
+$$
+T_i | X_i \sim Bernoulli()
+$$
+The true propensity score and observed treatment assignments are shown below.
+
+
 ```{r, echo=TRUE, eval=T}
 set.seed(201711)
 n_obs <- 500
