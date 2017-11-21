@@ -29,7 +29,7 @@ Example using `gpbalancer`
 
 ### Simulating data
 
-Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate *X* which is used to assign treatment, for *i* ∈ 1, …, 500 let,
+Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate *X* which is used to assign treatment, for *i* ∈ 1, …, 1000 let,
 
 *X*<sub>*i*</sub> ∼ *N*(0, 1)
 
@@ -52,8 +52,8 @@ where *ϵ*<sub>*i*, *G*</sub> ∼ *N*(0, 0.25<sup>2</sup>) for *G* ∈
 *Y*<sub>*i*</sub><sup>*o**b**s*</sup> = *I*(*T*<sub>*i*</sub> = 1)*Y*<sub>*i*</sub><sup>*T* = 1</sup> + *I*(*T* = 0)*Y*<sub>*i*</sub><sup>*T* = 0</sup>
 
 ``` r
-set.seed(201711)
-n_obs <- 500
+set.seed(2017)
+n_obs <- 1000
 pretreatment_cov <- rnorm(n_obs)
 prop_score <- 0.8 * pnorm(2*pretreatment_cov) + 0.1
 treatment_assignment <- rbinom(n_obs, size = 1, prob = prop_score)
@@ -108,7 +108,7 @@ knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretrea
 
 |                        |   NT|   MeanT|    VarT|   NC|    MeanC|    VarC|  StdDiff|  LogRatio|
 |------------------------|----:|-------:|-------:|----:|--------:|-------:|--------:|---------:|
-| Pretreatment.Covariate |  246|  0.6051|  0.6356|  254|  -0.5894|  0.6911|   1.4667|   -0.0419|
+| Pretreatment.Covariate |  494|  0.5371|  0.6889|  506|  -0.4716|  0.7324|   1.1966|   -0.0306|
 
 ### Visualizing the Potential Outcomes & Observed Responses
 
@@ -149,7 +149,7 @@ original_bias <- (hat_tau-3)
 message('Orignal Bias: ', round(original_bias,3))
 ```
 
-    ## Orignal Bias: 0.56
+    ## Orignal Bias: 0.427
 
 ### Estimating the Propensity Score
 
@@ -163,13 +163,13 @@ est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov),
                                    verbose = T)
 ```
 
-    ## Starting Optimization  @   2017-11-21 11:52:45
+    ## Starting Optimization  @   2017-11-21 13:54:39
 
-    ## Finished Optimization  @   2017-11-21 11:52:47
+    ## Finished Optimization  @   2017-11-21 13:54:49
 
-    ## Time Difference          : 1.7494
+    ## Time Difference          : 10.0489
 
-    ## Optimal Covariate Balance: 0.00223105
+    ## Optimal Covariate Balance: 2.425e-05
 
 #### Visualizing the Estimated Propensity Score
 
@@ -197,9 +197,9 @@ true_wts <- ifelse(ta_logical, 1/prop_score, 1/(1-prop_score))
 knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, true_wts))
 ```
 
-|                        |   NT|   MeanT|    VarT|   NC|  MeanC|    VarC|  StdDiff|  LogRatio|
-|------------------------|----:|-------:|-------:|----:|------:|-------:|--------:|---------:|
-| Pretreatment.Covariate |  246|  0.0932|  0.9112|  254|  0.022|  0.9779|   0.0733|   -0.0353|
+|                        |   NT|    MeanT|    VarT|   NC|   MeanC|    VarC|  StdDiff|  LogRatio|
+|------------------------|----:|--------:|-------:|----:|-------:|-------:|--------:|---------:|
+| Pretreatment.Covariate |  494|  -0.0569|  1.0578|  506|  0.1781|  1.1307|  -0.2247|   -0.0334|
 
 #### Balance Adjusting for the Estimated Optimally Balanced Gaussian Process Propensity Score
 
@@ -210,8 +210,14 @@ knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretrea
 
 |                        |   NT|   MeanT|    VarT|   NC|   MeanC|    VarC|  StdDiff|  LogRatio|
 |------------------------|----:|-------:|-------:|----:|-------:|-------:|--------:|---------:|
-| Pretreatment.Covariate |  246|  0.0123|  1.0673|  254|  -0.011|  0.9828|   0.0231|    0.0412|
+| Pretreatment.Covariate |  494|  0.0276|  0.9718|  506|  0.0252|  0.9634|   0.0024|    0.0043|
 
 ### Evaluating the Performance of the Optimally Balanced Gaussian Process Propensity Score
 
 We now compare the method when there is no adjustment on the propensity score and when there is adjustment by the true propensity score. To compare these three scenarios the bias, the percent reduction in bias compared with no adjustment, and the mean squared error of the estimators are provided.
+
+|                       | Est. ATE |  S.E. | Lower95 | Upper95 |  Bias  | % Red. in Abs. Bias |  MSE  |
+|-----------------------|:--------:|:-----:|:-------:|:-------:|:------:|:-------------------:|:-----:|
+| No Adjustment         |   3.427  | 0.075 |  3.280  |  3.574  |  0.427 |          -          | 0.188 |
+| True Propensity Score |   2.877  | 0.111 |  2.660  |  3.095  | -0.123 |        71.242       | 0.027 |
+| Opt Bal GP Prop Score |   2.942  | 0.101 |  2.745  |  3.139  | -0.058 |        86.408       | 0.013 |
