@@ -29,7 +29,7 @@ Example using `gpbalancer`
 
 ### Simulating data
 
-Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate *X* which is used to assign treatment, let
+Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate *X* which is used to assign treatment, for *i* ∈ 1, …, 500 let,
 
 *X*<sub>*i*</sub> ∼ *N*(0, 1)
 
@@ -43,9 +43,9 @@ where *Φ*(⋅) is the cumulative distribution of the Normal Distribution. Final
 
 Additionally, we will consider the following potential outcomes
 
-*Y*<sub>*i*</sub><sup>*T* = 1</sup> = *X*<sup>2</sup> + 2 + *ϵ*<sub>*i*, 𝒯</sub>
+*Y*<sub>*i*</sub><sup>*T* = 1</sup> = *X*<sub>*i*</sub><sup>2</sup> + 2 + *ϵ*<sub>*i*, 𝒯</sub>
 
-*Y*<sub>*i*</sub><sup>*T* = 0</sup> = *X* + *ϵ*<sub>*i*, 𝒞</sub>
+*Y*<sub>*i*</sub><sup>*T* = 0</sup> = *X*<sub>*i*</sub> + *ϵ*<sub>*i*, 𝒞</sub>
 
 where *ϵ*<sub>*i*, *G*</sub> ∼ *N*(0, 0.25<sup>2</sup>) for *G* ∈ {𝒯, 𝒞}. The observed outcome will be,
 
@@ -57,6 +57,7 @@ n_obs <- 500
 pretreatment_cov <- rnorm(n_obs)
 prop_score <- 0.9 * pnorm(2*pretreatment_cov) + 0.05
 treatment_assignment <- rbinom(n_obs, size = 1, prob = prop_score)
+ta_logical <- as.logical(treatment_assignment)
 y_t <- pretreatment_cov^2 + 2 + rnorm(n_obs, sd=0.25)
 y_c <- pretreatment_cov + rnorm(n_obs, sd=0.25)
 y_obs <- treatment_assignment * y_t + (1-treatment_assignment) * y_c
@@ -78,25 +79,56 @@ plot(pretreatment_cov, prop_score,
      xlab='Pretreatment Covariate',
      ylab='Probability of Treatment',
      main='Propensity Score & Observed Treatment Assignments')
-points(pretreatment_cov[as.logical(treatment_assignment)],
-       treatment_assignment[as.logical(treatment_assignment)],
+points(pretreatment_cov[ta_logical],
+       treatment_assignment[ta_logical],
        pch=19, col=t_col)
-points(pretreatment_cov[!as.logical(treatment_assignment)],
-       treatment_assignment[!as.logical(treatment_assignment)],
+points(pretreatment_cov[!ta_logical],
+       treatment_assignment[!ta_logical],
        pch=19, col=c_col)
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), pch=19, col=c(t_col, c_col), bg='white')
 
-plot(density(pretreatment_cov[!as.logical(treatment_assignment)], adjust = 1.5),
+plot(density(pretreatment_cov[!ta_logical], adjust = 1.5),
      xlim=range(pretreatment_cov), 
      type='l', lwd=3, col=c_col,
      xlab='Pretreatment Covariate',
      ylab='Density',
      main='Covariate Distributions Conditional Upon Treatment Type')
-lines(density(pretreatment_cov[as.logical(treatment_assignment)], adjust = 1.5),
+lines(density(pretreatment_cov[ta_logical], adjust = 1.5),
      lwd=3, col=t_col)
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg='white')
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
+
+### Visualizing the Potential Outcomes & Observed Responses
+
+Below are visualizations of the expectations of the potential response functions and the observed responses for the sample data.
+
+``` r
+exes <- seq(min(pretreatment_cov), 
+            max(pretreatment_cov), 
+            0.01)
+meanYT <- exes^2 + 2
+meanYC <- exes
+ylims <- range(cbind(meanYT, meanYC))
+
+plot(exes, meanYT,
+     type='l', lwd=3, col = t_col,
+     xlim=range(pretreatment_cov), ylim=ylims,
+     xlab='Pretreatment Covariate',
+     ylab='Response',
+     main='Expectation of Potential Response Functions\nAnd Observed Response Values')
+lines(exes, meanYC, lwd=3, col = c_col)
+points(pretreatment_cov[ta_logical], y_obs[ta_logical], pch=19, col=t_col)
+points(pretreatment_cov[!ta_logical], y_obs[!ta_logical], pch=19, col=c_col)
+legend('topleft', 
+       c(expression(E(Y^{T==1})), 
+         expression(E(Y^{T==0})),
+         expression(paste('Treated Group, ', Y^{obs})), 
+         expression(paste('Control Group, ', Y^{obs}))), 
+       lty=c(1,1,NA,NA), lwd=c(3,3,NA,NA), pch=c(NA, NA, 19, 19), col=c(t_col, c_col), bg='white')
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)

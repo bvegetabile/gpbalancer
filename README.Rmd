@@ -42,7 +42,7 @@ library('gpbalancer')
 
 ### Simulating data
 
-Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate $X$ which is used to assign treatment, let
+Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate $X$ which is used to assign treatment, for $i \in 1, \dots, 500$ let,
 
 \[
 X_i \sim N(0,1)
@@ -64,11 +64,11 @@ T_i | X_i \sim Bernoulli( \ e(X_i) \ )
 Additionally, we will consider the following potential outcomes
 
 \[
-Y_i^{T=1} = X^2 + 2 + \epsilon_{i,\mathcal{T}}
+Y_i^{T=1} = X_i^2 + 2 + \epsilon_{i,\mathcal{T}}
 \]
 
 \[
-Y_i^{T=0} = X + \epsilon_{i,\mathcal{C}}
+Y_i^{T=0} = X_i + \epsilon_{i,\mathcal{C}}
 \]
 
 where $\epsilon_{i,G} \sim N(0, 0.25^2)$ for $G \in \{\mathcal{T},\mathcal{C}\}$.  The observed outcome will be,
@@ -83,6 +83,7 @@ n_obs <- 500
 pretreatment_cov <- rnorm(n_obs)
 prop_score <- 0.9 * pnorm(2*pretreatment_cov) + 0.05
 treatment_assignment <- rbinom(n_obs, size = 1, prob = prop_score)
+ta_logical <- as.logical(treatment_assignment)
 y_t <- pretreatment_cov^2 + 2 + rnorm(n_obs, sd=0.25)
 y_c <- pretreatment_cov + rnorm(n_obs, sd=0.25)
 y_obs <- treatment_assignment * y_t + (1-treatment_assignment) * y_c
@@ -90,7 +91,6 @@ y_obs <- treatment_assignment * y_t + (1-treatment_assignment) * y_c
 t_col <- rgb(0.5,0,0.5,0.5)
 c_col <- rgb(0,0.5,0,0.5)
 ```
-
 
 ### Visualizing the Propensity Score & Covariate Imbalance
 
@@ -105,25 +105,55 @@ plot(pretreatment_cov, prop_score,
      xlab='Pretreatment Covariate',
      ylab='Probability of Treatment',
      main='Propensity Score & Observed Treatment Assignments')
-points(pretreatment_cov[as.logical(treatment_assignment)],
-       treatment_assignment[as.logical(treatment_assignment)],
+points(pretreatment_cov[ta_logical],
+       treatment_assignment[ta_logical],
        pch=19, col=t_col)
-points(pretreatment_cov[!as.logical(treatment_assignment)],
-       treatment_assignment[!as.logical(treatment_assignment)],
+points(pretreatment_cov[!ta_logical],
+       treatment_assignment[!ta_logical],
        pch=19, col=c_col)
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), pch=19, col=c(t_col, c_col), bg='white')
 
-plot(density(pretreatment_cov[!as.logical(treatment_assignment)], adjust = 1.5),
+plot(density(pretreatment_cov[!ta_logical], adjust = 1.5),
      xlim=range(pretreatment_cov), 
      type='l', lwd=3, col=c_col,
      xlab='Pretreatment Covariate',
      ylab='Density',
      main='Covariate Distributions Conditional Upon Treatment Type')
-lines(density(pretreatment_cov[as.logical(treatment_assignment)], adjust = 1.5),
+lines(density(pretreatment_cov[ta_logical], adjust = 1.5),
      lwd=3, col=t_col)
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg='white')
-
 ```
+
+### Visualizing the Potential Outcomes & Observed Responses
+
+Below are visualizations of the expectations of the potential response functions and the observed responses for the sample data.  
+
+```{r, echo=TRUE, eval=T, fig.width=10, fig.height=5}
+exes <- seq(min(pretreatment_cov), 
+            max(pretreatment_cov), 
+            0.01)
+meanYT <- exes^2 + 2
+meanYC <- exes
+ylims <- range(cbind(meanYT, meanYC))
+
+plot(exes, meanYT,
+     type='l', lwd=3, col = t_col,
+     xlim=range(pretreatment_cov), ylim=ylims,
+     xlab='Pretreatment Covariate',
+     ylab='Response',
+     main='Expectation of Potential Response Functions\nAnd Observed Response Values')
+lines(exes, meanYC, lwd=3, col = c_col)
+points(pretreatment_cov[ta_logical], y_obs[ta_logical], pch=19, col=t_col)
+points(pretreatment_cov[!ta_logical], y_obs[!ta_logical], pch=19, col=c_col)
+legend('topleft', 
+       c(expression(E(Y^{T==1})), 
+         expression(E(Y^{T==0})),
+         expression(paste('Treated Group, ', Y^{obs})), 
+         expression(paste('Control Group, ', Y^{obs}))), 
+       lty=c(1,1,NA,NA), lwd=c(3,3,NA,NA), pch=c(NA, NA, 19, 19), col=c(t_col, c_col), bg='white')
+```
+
+
 
