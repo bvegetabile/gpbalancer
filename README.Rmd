@@ -45,9 +45,7 @@ library('gpbalancer')
 Provided below is a simple simulation to explore the effectiveness of the optimally balanced Gaussian process propensity score. Consider a continuous covariate $X$ which is used to assign treatment, let
 
 \[
-\begin{center}
 X_i \sim N(0,1)
-\end{center}
 \]
 
 Additionally, let the true propensity score be defined as follows,
@@ -56,7 +54,7 @@ Additionally, let the true propensity score be defined as follows,
 e(X_i) = \mbox{Pr}(T_i = 1 | X_i) = 0.9 \times \Phi(2 * X_i) + 0.05
 \]
 
-where $\Phi()$ is the cumulative distribution of the Normal Distribution.  Finally, we simulate treatment assignment such that,
+where $\Phi(\cdot)$ is the cumulative distribution of the Normal Distribution.  Finally, we simulate treatment assignment such that,
 
 \[
 T_i | X_i \sim Bernoulli(e(X_i))
