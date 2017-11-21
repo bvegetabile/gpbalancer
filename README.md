@@ -35,7 +35,7 @@ Provided below is a simple simulation to explore the effectiveness of the optima
 
 Additionally, let the true propensity score be defined as follows,
 
-*e*(*X*<sub>*i*</sub>)=Pr(*T*<sub>*i*</sub> = 1|*X*<sub>*i*</sub>)=0.9 × *Φ*(2 \* *X*<sub>*i*</sub>)+0.05
+*e*(*X*<sub>*i*</sub>)=Pr(*T*<sub>*i*</sub> = 1|*X*<sub>*i*</sub>)=0.8 × *Φ*(2 \* *X*<sub>*i*</sub>)+0.1
 
 where *Φ*(⋅) is the cumulative distribution of the Normal Distribution. Finally, we simulate treatment assignment such that,
 
@@ -55,7 +55,7 @@ where *ϵ*<sub>*i*, *G*</sub> ∼ *N*(0, 0.25<sup>2</sup>) for *G* ∈
 set.seed(201711)
 n_obs <- 500
 pretreatment_cov <- rnorm(n_obs)
-prop_score <- 0.9 * pnorm(2*pretreatment_cov) + 0.05
+prop_score <- 0.8 * pnorm(2*pretreatment_cov) + 0.1
 treatment_assignment <- rbinom(n_obs, size = 1, prob = prop_score)
 ta_logical <- as.logical(treatment_assignment)
 y_t <- pretreatment_cov^2 + 2 + rnorm(n_obs, sd=0.25)
@@ -102,6 +102,14 @@ legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg
 
 ![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
+``` r
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical))
+```
+
+|                        |   NT|   MeanT|    VarT|   NC|    MeanC|    VarC|  StdDiff|  LogRatio|
+|------------------------|----:|-------:|-------:|----:|--------:|-------:|--------:|---------:|
+| Pretreatment.Covariate |  246|  0.6051|  0.6356|  254|  -0.5894|  0.6911|   1.4667|   -0.0419|
+
 ### Visualizing the Potential Outcomes & Observed Responses
 
 Below are visualizations of the expectations of the potential response functions and the observed responses for the sample data.
@@ -141,7 +149,7 @@ original_bias <- (hat_tau-3)
 message('Orignal Bias: ', round(original_bias,3))
 ```
 
-    ## Orignal Bias: 0.611
+    ## Orignal Bias: 0.56
 
 ### Estimating the Propensity Score
 
@@ -155,13 +163,13 @@ est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov),
                                    verbose = T)
 ```
 
-    ## Starting Optimization  @   2017-11-21 11:37:07
+    ## Starting Optimization  @   2017-11-21 11:52:45
 
-    ## Finished Optimization  @   2017-11-21 11:37:09
+    ## Finished Optimization  @   2017-11-21 11:52:47
 
-    ## Time Difference          : 1.8992
+    ## Time Difference          : 1.7494
 
-    ## Optimal Covariate Balance: 0.12727985
+    ## Optimal Covariate Balance: 0.00223105
 
 #### Visualizing the Estimated Propensity Score
 
@@ -181,3 +189,29 @@ legend('topleft', c('True Propensity Score', 'Estimated Propensity Score'), pch=
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
+#### Balance Adjusting for the True Propensity Score
+
+``` r
+true_wts <- ifelse(ta_logical, 1/prop_score, 1/(1-prop_score))
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, true_wts))
+```
+
+|                        |   NT|   MeanT|    VarT|   NC|  MeanC|    VarC|  StdDiff|  LogRatio|
+|------------------------|----:|-------:|-------:|----:|------:|-------:|--------:|---------:|
+| Pretreatment.Covariate |  246|  0.0932|  0.9112|  254|  0.022|  0.9779|   0.0733|   -0.0353|
+
+#### Balance Adjusting for the Estimated Optimally Balanced Gaussian Process Propensity Score
+
+``` r
+est_wts <- ifelse(ta_logical, 1/est_propscore$ps, 1/(1-est_propscore$ps))
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, est_wts))
+```
+
+|                        |   NT|   MeanT|    VarT|   NC|   MeanC|    VarC|  StdDiff|  LogRatio|
+|------------------------|----:|-------:|-------:|----:|-------:|-------:|--------:|---------:|
+| Pretreatment.Covariate |  246|  0.0123|  1.0673|  254|  -0.011|  0.9828|   0.0231|    0.0412|
+
+### Evaluating the Performance of the Optimally Balanced Gaussian Process Propensity Score
+
+We now compare the method when there is no adjustment on the propensity score and when there is adjustment by the true propensity score. To compare these three scenarios the bias, the percent reduction in bias compared with no adjustment, and the mean squared error of the estimators are provided.

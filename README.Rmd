@@ -51,7 +51,7 @@ X_i \sim N(0,1)
 Additionally, let the true propensity score be defined as follows,
 
 \[
-e(X_i) = \mbox{Pr}(T_i = 1 | X_i) = 0.9 \times \Phi(2 * X_i) + 0.05
+e(X_i) = \mbox{Pr}(T_i = 1 | X_i) = 0.8 \times \Phi(2 * X_i) + 0.1
 \]
 
 where $\Phi(\cdot)$ is the cumulative distribution of the Normal Distribution.  Finally, we simulate treatment assignment such that,
@@ -81,7 +81,7 @@ Y_i^{obs} = I(T_i=1)Y_i^{T=1} + I(T=0)Y_i^{T=0}
 set.seed(201711)
 n_obs <- 500
 pretreatment_cov <- rnorm(n_obs)
-prop_score <- 0.9 * pnorm(2*pretreatment_cov) + 0.05
+prop_score <- 0.8 * pnorm(2*pretreatment_cov) + 0.1
 treatment_assignment <- rbinom(n_obs, size = 1, prob = prop_score)
 ta_logical <- as.logical(treatment_assignment)
 y_t <- pretreatment_cov^2 + 2 + rnorm(n_obs, sd=0.25)
@@ -124,7 +124,11 @@ lines(density(pretreatment_cov[ta_logical], adjust = 1.5),
      lwd=3, col=t_col)
 abline(h=c(0,1), lty=3)
 legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg='white')
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical))
 ```
+
+
+
 
 ### Visualizing the Potential Outcomes & Observed Responses
 
@@ -191,3 +195,29 @@ points(pretreatment_cov,
 abline(h=c(0,1), lty=3)
 legend('topleft', c('True Propensity Score', 'Estimated Propensity Score'), pch=19, col=c(rgb(0,0,0,0.5), rgb(0,0,0.5,0.5)), bg='white')
 ```
+
+
+#### Balance Adjusting for the True Propensity Score
+
+```{r, echo=T, eval=T}
+true_wts <- ifelse(ta_logical, 1/prop_score, 1/(1-prop_score))
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, true_wts))
+```
+
+#### Balance Adjusting for the Estimated Optimally Balanced Gaussian Process Propensity Score
+
+```{r, echo=T, eval=T}
+est_wts <- ifelse(ta_logical, 1/est_propscore$ps, 1/(1-est_propscore$ps))
+knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, est_wts))
+```
+
+### Evaluating the Performance of the Optimally Balanced Gaussian Process Propensity Score
+
+We now compare the method when there is no adjustment on the propensity score and when there is adjustment by the true propensity score.  To compare these three scenarios the bias, the percent reduction in bias compared with no adjustment, and the mean squared error of the estimators are provided. 
+
+```{r, eval=T, echo =F}
+source('~/git/causalTools/causalTools.R')
+noadj_bias <- original_bias
+```
+
+
