@@ -138,4 +138,7 @@ Under these settings if we are attempting to model *τ* = *E*(*Y*<sup>*T* 
 ``` r
 hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
 original_bias <- (hat_tau-3)
+message('Orignal Bias: ', round(original_bias,3))
 ```
+
+    ## Orignal Bias: 0.611

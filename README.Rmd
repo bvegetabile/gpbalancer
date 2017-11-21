@@ -160,6 +160,7 @@ Under these settings if we are attempting to model $\tau = E(Y^{T=1} - Y^{T=0})$
 ```{r, echo=TRUE, eval=T}
 hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
 original_bias <- (hat_tau-3)
+message('Orignal Bias: ', round(original_bias,3))
 ```
 
 
