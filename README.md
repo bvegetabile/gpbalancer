@@ -142,3 +142,42 @@ message('Orignal Bias: ', round(original_bias,3))
 ```
 
     ## Orignal Bias: 0.611
+
+### Estimating the Propensity Score
+
+Using the above simulated data, we can now estimate the propensity score. The reported time is in seconds:
+
+``` r
+est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov), 
+                                   y = treatment_assignment, 
+                                   init_theta = c(1),
+                                   cov_function = gpbalancer::sqexp_par,
+                                   verbose = T)
+```
+
+    ## Starting Optimization  @   2017-11-21 11:37:07
+
+    ## Finished Optimization  @   2017-11-21 11:37:09
+
+    ## Time Difference          : 1.8992
+
+    ## Optimal Covariate Balance: 0.12727985
+
+#### Visualizing the Estimated Propensity Score
+
+``` r
+plot(pretreatment_cov, prop_score, 
+     xlim=range(pretreatment_cov), 
+     ylim=c(0,1),
+     pch=19, col=rgb(0,0,0,0.5),
+     xlab='Pretreatment Covariate',
+     ylab='Probability of Treatment',
+     main='Comparing True vs. Estimated Propensity Score')
+points(pretreatment_cov,
+       est_propscore$ps,
+       pch=19, col=rgb(0,0,0.5,0.5))
+abline(h=c(0,1), lty=3)
+legend('topleft', c('True Propensity Score', 'Estimated Propensity Score'), pch=19, col=c(rgb(0,0,0,0.5), rgb(0,0,0.5,0.5)), bg='white')
+```
+
+![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
