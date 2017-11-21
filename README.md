@@ -39,7 +39,7 @@ Additionally, let the true propensity score be defined as follows,
 
 where *Φ*(⋅) is the cumulative distribution of the Normal Distribution. Finally, we simulate treatment assignment such that,
 
-*T*<sub>*i*</sub>|*X*<sub>*i*</sub> ∼ *B**e**r**n**o**u**l**l**i*(*e*(*X*<sub>*i*</sub>))
+*T*<sub>*i*</sub>|*X*<sub>*i*</sub> ∼ *B**e**r**n**o**u**l**l**i*( *e*(*X*<sub>*i*</sub>) )
 
 Additionally, we will consider the following potential outcomes
 

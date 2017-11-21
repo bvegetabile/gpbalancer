@@ -57,7 +57,7 @@ e(X_i) = \mbox{Pr}(T_i = 1 | X_i) = 0.9 \times \Phi(2 * X_i) + 0.05
 where $\Phi(\cdot)$ is the cumulative distribution of the Normal Distribution.  Finally, we simulate treatment assignment such that,
 
 \[
-T_i | X_i \sim Bernoulli(e(X_i))
+T_i | X_i \sim Bernoulli( \ e(X_i) \ )
 \]
 
 
