@@ -141,7 +141,7 @@ legend('topleft',
 
 ![](README_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
-Under these settings if we are attempting to model *τ* = *E*(*Y*<sup>*T* = 1</sup> − *Y*<sup>*T* = 0</sup>) without adjustment (i.e. using *E*(*Y*<sup>*o**b**s*</sup>|*T* = 1)−*E*(*Y*<sup>*o**b**s*</sup>|*T* = 0)), then the bias would be approximately 0.6.
+Under these settings if we are attempting to model *τ* = *E*(*Y*<sup>*T* = 1</sup> − *Y*<sup>*T* = 0</sup>) without adjustment (i.e. using *E*(*Y*<sup>*o**b**s*</sup>|*T* = 1)−*E*(*Y*<sup>*o**b**s*</sup>|*T* = 0)), then the bias would be approximately 0.43.
 
 ``` r
 hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
@@ -163,11 +163,11 @@ est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov),
                                    verbose = T)
 ```
 
-    ## Starting Optimization  @   2017-11-21 13:54:39
+    ## Starting Optimization  @   2017-11-27 18:31:27
 
-    ## Finished Optimization  @   2017-11-21 13:54:49
+    ## Finished Optimization  @   2017-11-27 18:36:44
 
-    ## Time Difference          : 10.0489
+    ## Time Difference          : 316.7918
 
     ## Optimal Covariate Balance: 2.425e-05
 

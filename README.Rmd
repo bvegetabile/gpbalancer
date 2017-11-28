@@ -159,7 +159,7 @@ legend('topleft',
        lty=c(1,1,NA,NA), lwd=c(3,3,NA,NA), pch=c(NA, NA, 19, 19), col=c(t_col, c_col), bg='white')
 ```
 
-Under these settings if we are attempting to model $\tau = E(Y^{T=1} - Y^{T=0})$ without adjustment (i.e. using $E(Y^{obs} | T=1) - E(Y^{obs} | T=0))$, then the bias would be approximately 0.6. 
+Under these settings if we are attempting to model $\tau = E(Y^{T=1} - Y^{T=0})$ without adjustment (i.e. using $E(Y^{obs} | T=1) - E(Y^{obs} | T=0))$, then the bias would be approximately 0.43. 
 
 ```{r, echo=TRUE, eval=T}
 hat_tau <- mean(y_obs[ta_logical]) - mean(y_obs[!ta_logical])
