@@ -81,14 +81,23 @@ gpbal <- function(X, y,
                   return_theta = F,
                   verbose = F,
                   balance_metric = 'mom_sq',
-                  ep_vers = 'parallel'){
+                  ep_vers = 'parallel',
+                  wts_vers='ATE'){
 
   objective_function <- function(theta){
     ncov <- length(theta)
     cov_matrix <- cov_function(as.matrix(X), c(1,theta))
     ps_res <- gpbal_fixed(y, cov_matrix, verbose = F, tol = 1e-2, ep_vers=ep_vers)
     ps_est <- pnorm(ps_res$PosteriorMean)
-    ps_wts <- ifelse(y==1, 1/ps_est, 1/(1-ps_est))
+
+    if(tolower(wts_vers) =='ate'){
+      ps_wts <- ifelse(y==1, 1/ps_est, 1/(1-ps_est))
+    } else if(tolower(wts_vers) == 'att') {
+      ps_wts <- ifelse(y==1, 1, ps_est/(1-ps_est))
+    } else {
+      message('invalid weighting scheme')
+      return(NULL)
+    }
 
     if(balance_metric == 'mom_sq'){
       cb_bal <- .mom_sq_bal(data.frame(X), 1:ncol(X), y==1, ps_wts)
@@ -123,7 +132,7 @@ gpbal <- function(X, y,
 
   opt_matrix <- cov_function(as.matrix(X), c(1,opt_theta$par))
   opt_ps <- gpbal_fixed(y, opt_matrix, verbose = F, tol = 1e-2, ep_vers=ep_vers)
-
+  opt_ps$ComputationTime <- difftime(end_time, start_time, units='secs')
 
 
   return(opt_ps)
