@@ -114,16 +114,17 @@ gpbal <- function(X, y,
     return(cb_bal)
   }
 
+
+  start_time <- Sys.time()
   if(verbose){
-    start_time <- Sys.time()
     message(paste('Starting Optimization  @  ', start_time))
   }
-
   opt_theta <- minqa::bobyqa(par = init_theta,
                              fn = objective_function,
                              lower = rep(0, length(init_theta)))
+  end_time <- Sys.time()
   if(verbose){
-    end_time <- Sys.time()
+
     message(paste('Finished Optimization  @  ', end_time))
     message(paste('Time Difference          :', round(difftime(end_time, start_time, units='secs'), 4)))
 
