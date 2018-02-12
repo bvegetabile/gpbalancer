@@ -102,7 +102,7 @@ struct UpdateSiteParameters : public Worker {
     double normal_ratio;
     double delta_tau;
 
-    for(int i = i_beg; i < i_end; i++){
+    for(unsigned int i = i_beg; i < i_end; i++){
       // Getting the random index from the shuffled list of indices
       ind = random_order(i);
 
