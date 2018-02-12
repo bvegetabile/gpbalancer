@@ -38,8 +38,8 @@ struct ConstructSqExpKernel : public Worker {
     double x_dim = design_x.n_cols;
     double sig_var = vec_theta[0];
 
-    for(int i = row_beg; i < row_end; i++){
-      for(int j = 0; j <= i; j++){
+    for(unsigned int i = row_beg; i < row_end; i++){
+      for(unsigned int j = 0; j <= i; j++){
         double inner_sum = 0.0;
         for(int d = 0; d < x_dim; d++){
           inner_sum += pow(vec_theta[d+1], 2) * pow(design_x(i, d) - design_x(j,d), 2);
