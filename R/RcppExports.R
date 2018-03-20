@@ -5,6 +5,18 @@ construct_sqexp <- function(X, M, sig, noise) {
     .Call(`_gpbalancer_construct_sqexp`, X, M, sig, noise)
 }
 
+sqexp_ard <- function(X, hyperparams, scale = 1.0, noise = 1e-6) {
+    .Call(`_gpbalancer_sqexp_ard`, X, hyperparams, scale, noise)
+}
+
+sqexp_common <- function(X, lengthscale, scale = 1.0, noise = 1e-6) {
+    .Call(`_gpbalancer_sqexp_common`, X, lengthscale, scale, noise)
+}
+
+polykernel <- function(X, sig_zero, pwr = 1L, scale = 1.0, noise = 1e-6) {
+    .Call(`_gpbalancer_polykernel`, X, sig_zero, pwr, scale, noise)
+}
+
 par_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
     .Call(`_gpbalancer_par_ep`, y, cov_matrix, tol, max_iters, verbose)
 }
