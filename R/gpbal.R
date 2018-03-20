@@ -85,7 +85,7 @@ gpbal <- function(X, y,
 
   objective_function <- function(theta){
     ncov <- length(theta)
-    cov_matrix <- cov_function(as.matrix(X), c(1,theta))
+    cov_matrix <- cov_function(as.matrix(X), theta)
     ps_res <- gpbal_fixed(y, cov_matrix, verbose = F, tol = 1e-2, ep_vers=ep_vers)
     ps_est <- pnorm(ps_res$PosteriorMean)
 
