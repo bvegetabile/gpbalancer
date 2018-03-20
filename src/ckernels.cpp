@@ -34,33 +34,58 @@ NumericMatrix construct_sqexp(NumericMatrix X, NumericMatrix M, double sig, doub
   return(cov_mat);
 }
 
-// // [[Rcpp::export]]
-// NumericMatrix construct_poly(NumericMatrix X, double p, double sig0, double sig1, double noise) {
-//   int N = X.nrow();
-//   int D = X.ncol();
-//
-//   NumericMatrix cov_mat(N,N);
-//   double top_sum;
-//   double l_sum;
-//   double r_sum;
-//   double normval;
-//   for(int i = 0; i < N; i++){
-//     for(int j = i; j < N; j++){
-//       top_sum = sig0;
-//       l_sum = sig0;
-//       r_sum = sig0;
-//       for(int d1 = 0; d1 < D; d1++){
-//         top_sum += X(i, d1) * X(j, d1);
-//         l_sum += X(i, d1) * X(i, d1);
-//         r_sum += X(j, d1) * X(j, d1);
-//       }
-//       normval = top_sum / (sqrt(l_sum)*sqrt(r_sum));
-//       cov_mat(i,j) = sig1 * pow(normval,p);
-//       cov_mat(j,i) = cov_mat(i,j);
-//     }
-//   }
-//   for(int k = 0; k < N; k++){
-//     cov_mat(k,k) += noise;
-//   }
-//   return(cov_mat);
-// }
+// [[Rcpp::export]]
+arma::mat sqexp_ard(arma::mat X,
+                arma::rowvec hyperparams,
+                double scale=1.0,
+                double noise = 1e-6){
+  arma::mat cov_mat(X.n_rows, X.n_rows, arma::fill::zeros);
+  for(int i = 0; i < X.n_rows; i++){
+    for(int j = i; j < X.n_rows; j++){
+      cov_mat(i, j) = scale * exp(- 0.5 * arma::sum(arma::pow(X.row(i) - X.row(j), 2) / arma::pow(hyperparams,2)));
+      cov_mat(j, i) = cov_mat(i, j);
+    }
+    cov_mat(i,i) = cov_mat(i,i) + noise;
+  }
+  return(cov_mat);
+}
+
+// [[Rcpp::export]]
+arma::mat sqexp_common(arma::mat X,
+                       double lengthscale,
+                       double scale=1.0,
+                       double noise = 1e-6){
+  arma::mat cov_mat(X.n_rows, X.n_rows, arma::fill::zeros);
+  for(int i = 0; i < X.n_rows; i++){
+    for(int j = i; j < X.n_rows; j++){
+      cov_mat(i, j) = scale * std::exp(- 0.5 * arma::sum(arma::pow(X.row(i) - X.row(j), 2) * std::pow(lengthscale,2)));
+      cov_mat(j, i) = cov_mat(i, j);
+    }
+    cov_mat(i,i) = cov_mat(i,i) + noise;
+  }
+  return(cov_mat);
+}
+
+// [[Rcpp::export]]
+arma::mat polykernel(arma::mat X,
+                     double sig_zero,
+                     int pwr = 1,
+                     double scale=1.0,
+                     double noise = 1e-6){
+  arma::mat cov_mat(X.n_rows, X.n_rows, arma::fill::zeros);
+  double upper;
+  double low_l;
+  double low_r;
+
+  for(int i = 0; i < X.n_rows; i++){
+    for(int j = i; j < X.n_rows; j++){
+      upper = arma::dot(X.row(i), X.row(j)) + sig_zero;
+      low_l = std::sqrt(arma::dot(X.row(i), X.row(i)) + sig_zero);
+      low_r = std::sqrt(arma::dot(X.row(j), X.row(j)) + sig_zero);
+      cov_mat(i, j) = scale * std::pow(upper / low_l / low_r, pwr);
+      cov_mat(j, i) = cov_mat(i, j);
+    }
+    cov_mat(i,i) = cov_mat(i,i) + noise;
+  }
+  return(cov_mat);
+}
