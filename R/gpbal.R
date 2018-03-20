@@ -78,7 +78,6 @@ gpbal_fixed <- function(y, cov_matrix,
 gpbal <- function(X, y,
                   cov_function,
                   init_theta,
-                  return_theta = F,
                   verbose = F,
                   balance_metric = 'mom_sq',
                   ep_vers = 'parallel',
@@ -134,8 +133,6 @@ gpbal <- function(X, y,
   opt_matrix <- cov_function(as.matrix(X), c(1,opt_theta$par))
   opt_ps <- gpbal_fixed(y, opt_matrix, verbose = F, tol = 1e-2, ep_vers=ep_vers)
   opt_ps$ComputationTime <- difftime(end_time, start_time, units='secs')
-  if(return_theta==T){
-    opt_ps$thetas <- opt_theta$par
-  }
+  opt_ps$thetas <- opt_theta$par
   return(opt_ps)
 }
