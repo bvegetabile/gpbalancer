@@ -79,10 +79,10 @@ arma::mat polykernel(arma::mat X,
 
   for(int i = 0; i < X.n_rows; i++){
     for(int j = i; j < X.n_rows; j++){
-      upper = arma::dot(X.row(i), X.row(j)) + sig_zero;
-      low_l = std::sqrt(arma::dot(X.row(i), X.row(i)) + sig_zero);
-      low_r = std::sqrt(arma::dot(X.row(j), X.row(j)) + sig_zero);
-      cov_mat(i, j) = scale * std::pow(upper / low_l / low_r, pwr);
+      upper = arma::dot(X.row(i), X.row(j)) + std::pow(sig_zero,2);
+      low_l = std::sqrt(arma::dot(X.row(i), X.row(i)) + std::pow(sig_zero,2));
+      low_r = std::sqrt(arma::dot(X.row(j), X.row(j)) + std::pow(sig_zero,2));
+      cov_mat(i, j) = std::pow(scale,2) * std::pow(upper / low_l / low_r, pwr);
       cov_mat(j, i) = cov_mat(i, j);
     }
     cov_mat(i,i) = cov_mat(i,i) + noise;
