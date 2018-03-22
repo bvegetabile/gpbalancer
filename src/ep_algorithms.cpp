@@ -20,10 +20,10 @@ arma::vec std_norm_cdf(arma::vec X){
   return(F);
 }
 //
-  double norm_dens(double x){
-    double res = std::exp(-std::pow(x, 2.0) / 2.0)/ std::sqrt(arma::datum::pi * 2.0);
-    return(res);
-  }
+double norm_dens(double x){
+  double res = std::exp(-std::pow(x, 2.0) / 2.0)/ std::sqrt(arma::datum::pi * 2.0);
+  return(res);
+}
 
 double norm_cdf(double x){
   double res = 0.5 * ( 1.0 + std::erf(x / std::sqrt(2.0)));
@@ -33,13 +33,13 @@ double norm_cdf(double x){
 
 struct UpdateSiteParameters : public Worker {
   /* Needed Terms:
-    * - random_order: shuffled data
-  * - tilde_nu:
-    * - tilde_tau:
-    * - mu: Current Posterior mean
-  * - sigma_mat: Current Posterior Covariance
-  */
-    const arma::ivec& random_order;
+   * - random_order: shuffled data
+   * - tilde_nu:
+   * - tilde_tau:
+   * - mu: Current Posterior mean
+   * - sigma_mat: Current Posterior Covariance
+   */
+  const arma::ivec& random_order;
   const arma::vec& y;
   const arma::vec& old_nu;
   const arma::vec& old_tau;
@@ -48,14 +48,14 @@ struct UpdateSiteParameters : public Worker {
 
 
   /* Things we want to update, that do not touch other loop throughs...
-  * cavity_tau
-  * cavity_nu
-  * small_z
-  * big_z
-  *
-    * final site parameters: tilde_nu, tilde_tau
-  */
-    arma::vec& cavity_tau;
+   * cavity_tau
+   * cavity_nu
+   * small_z
+   * big_z
+   *
+   * final site parameters: tilde_nu, tilde_tau
+   */
+  arma::vec& cavity_tau;
   arma::vec& cavity_nu;
   arma::vec& hat_mu;
   arma::vec& hat_sig;
@@ -64,37 +64,37 @@ struct UpdateSiteParameters : public Worker {
   arma::vec& tilde_nu;
   arma::vec& tilde_tau;
   /*
-    * Output Variables
-  */
+   * Output Variables
+   */
 
-    UpdateSiteParameters(const arma::ivec& random_order,
-                         const arma::vec& y,
-                         const arma::vec& old_nu,
-                         const arma::vec& old_tau,
-                         const arma::vec& mu,
-                         const arma::mat& sigma_mat,
-                         arma::vec& cavity_tau,
-                         arma::vec& cavity_nu,
-                         arma::vec& hat_mu,
-                         arma::vec& hat_sig,
-                         arma::vec& small_z,
-                         arma::vec& big_z,
-                         arma::vec& tilde_nu,
-                         arma::vec& tilde_tau)
-  : random_order(random_order),
-  y(y),
-  old_nu(old_nu),
-  old_tau(old_tau),
-  mu(mu),
-  sigma_mat(sigma_mat),
-  cavity_tau(cavity_tau),
-  cavity_nu(cavity_nu),
-  hat_mu(hat_mu),
-  hat_sig(hat_sig),
-  small_z(small_z),
-  big_z(big_z),
-  tilde_nu(tilde_nu),
-  tilde_tau(tilde_tau) {}
+  UpdateSiteParameters(const arma::ivec& random_order,
+                       const arma::vec& y,
+                       const arma::vec& old_nu,
+                       const arma::vec& old_tau,
+                       const arma::vec& mu,
+                       const arma::mat& sigma_mat,
+                       arma::vec& cavity_tau,
+                       arma::vec& cavity_nu,
+                       arma::vec& hat_mu,
+                       arma::vec& hat_sig,
+                       arma::vec& small_z,
+                       arma::vec& big_z,
+                       arma::vec& tilde_nu,
+                       arma::vec& tilde_tau)
+    : random_order(random_order),
+      y(y),
+      old_nu(old_nu),
+      old_tau(old_tau),
+      mu(mu),
+      sigma_mat(sigma_mat),
+      cavity_tau(cavity_tau),
+      cavity_nu(cavity_nu),
+      hat_mu(hat_mu),
+      hat_sig(hat_sig),
+      small_z(small_z),
+      big_z(big_z),
+      tilde_nu(tilde_nu),
+      tilde_tau(tilde_tau) {}
   // function call
   void operator()(std::size_t i_beg, std::size_t i_end) {
     int ind;
@@ -108,12 +108,12 @@ struct UpdateSiteParameters : public Worker {
 
       //# Computing Approximate Cavity Parameters
 
-        cavity_tau(ind) = (1.0/sigma_mat(ind, ind)) - tilde_tau(ind);
+      cavity_tau(ind) = (1.0/sigma_mat(ind, ind)) - tilde_tau(ind);
       cavity_nu(ind) = (1.0/sigma_mat(ind, ind)) * mu(ind) - tilde_nu(ind);
 
       //# Compute Posterior Marginal Moments - hat terms from algorithm 3.58
-        //# -- Converted into terms of natural cavity parameters
-        var_ratio = 1.0 / (cavity_tau(ind) * std::sqrt(1.0 + 1.0/cavity_tau(ind)));
+      //# -- Converted into terms of natural cavity parameters
+      var_ratio = 1.0 / (cavity_tau(ind) * std::sqrt(1.0 + 1.0/cavity_tau(ind)));
       small_z(ind) = y(ind) * cavity_nu(ind) * var_ratio;
       big_z(ind) = norm_cdf(small_z(ind));
 
@@ -133,15 +133,15 @@ struct UpdateSiteParameters : public Worker {
 
 // [[Rcpp::export]]
 List par_ep(arma::vec y,
-           arma::mat cov_matrix,
-           double tol,
-           int max_iters,
-           bool verbose) {
+            arma::mat cov_matrix,
+            double tol,
+            int max_iters,
+            bool verbose) {
 
   /* allocate things...
-  *
-    */
-    RNGScope rngScope;
+   *
+   */
+  RNGScope rngScope;
 
   // Finding the total number of observations to initialize all vectors
   int n_obs = y.size();
@@ -182,10 +182,10 @@ List par_ep(arma::vec y,
   }
 
   /*
-    * Initialization outside of loop for efficiency;
-  */
+   * Initialization outside of loop for efficiency;
+   */
 
-    arma::mat S_tilde_onehalf;
+  arma::mat S_tilde_onehalf;
   arma::mat L;
   arma::mat V;
   arma::vec old_tau;
@@ -194,7 +194,7 @@ List par_ep(arma::vec y,
 
   while((max_change_nu > tol or max_change_tau > tol) and iters < max_iters){
     //# while(iters < max_iters){
-      // Creating a Random Order to Calculate Approximations
+    // Creating a Random Order to Calculate Approximations
     arma::ivec random_order(n_obs);
     std::iota(random_order.begin(), random_order.end(), 0);
     std::random_shuffle(random_order.begin(), random_order.end());
@@ -243,14 +243,14 @@ List par_ep(arma::vec y,
   double terms_5remain = 0.5 * dot(cavity_mu, T_mat * inv_sympd(S_tilde + T_mat) * (S_tilde*cavity_mu + 2.0*tilde_nu));
   double terms_3 = sum(log(big_z));
   //
-    double log_Z_ep = terms_4_1 + terms_2_5quad + terms_5remain + terms_3;
+  double log_Z_ep = terms_4_1 + terms_2_5quad + terms_5remain + terms_3;
   return(List::create(
-    _["Number_Iters"] = iters,
-    _["PosteriorMean"] = mu,
-    _["PosteriorVar"] = sigma_mat,
-    _["tilde_nu"] = tilde_nu,
-    _["tilde_tau"] = tilde_tau,
-    _["log_Z_ep"] = log_Z_ep));
+      _["Number_Iters"] = iters,
+      _["PosteriorMean"] = mu,
+      _["PosteriorVar"] = sigma_mat,
+      _["tilde_nu"] = tilde_nu,
+      _["tilde_tau"] = tilde_tau,
+      _["log_Z_ep"] = log_Z_ep));
 };
 
 
