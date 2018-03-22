@@ -65,11 +65,10 @@ sqexp_par <- function(X, theta = rep(1, ncol(X)+1), sig_noise=0.000001){
 }
 
 sqexp_poly <- function(X, theta, noise = 1e-4){
-  scale0 <- theta[1]
-  sig0 <- theta[2]
+  scale0 <- 1
+  sig0 <- theta[1]
   scale1 <- 1
-  ls1 <- theta[3]
-
+  ls1 <- theta[2]
 
   K1 <- polykernel(X, sig0, pwr = 1,
                    scale = scale0, noise=noise)
