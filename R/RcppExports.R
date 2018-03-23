@@ -25,6 +25,10 @@ seq_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
     .Call(`_gpbalancer_seq_ep`, y, cov_matrix, tol, max_iters, verbose)
 }
 
+la_probit <- function(targets, covmat, tol = 1e-2, max_iters = 20L) {
+    .Call(`_gpbalancer_la_probit`, targets, covmat, tol, max_iters)
+}
+
 par_sqexp <- function(design_x, vec_theta, sig_noise = 1e-6) {
     .Call(`_gpbalancer_par_sqexp`, design_x, vec_theta, sig_noise)
 }

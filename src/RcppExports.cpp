@@ -93,6 +93,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// la_probit
+arma::vec la_probit(arma::vec targets, arma::mat covmat, double tol, int max_iters);
+RcppExport SEXP _gpbalancer_la_probit(SEXP targetsSEXP, SEXP covmatSEXP, SEXP tolSEXP, SEXP max_itersSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type targets(targetsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type covmat(covmatSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iters(max_itersSEXP);
+    rcpp_result_gen = Rcpp::wrap(la_probit(targets, covmat, tol, max_iters));
+    return rcpp_result_gen;
+END_RCPP
+}
 // par_sqexp
 arma::mat par_sqexp(arma::mat design_x, arma::vec vec_theta, double sig_noise);
 RcppExport SEXP _gpbalancer_par_sqexp(SEXP design_xSEXP, SEXP vec_thetaSEXP, SEXP sig_noiseSEXP) {
@@ -114,6 +128,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpbalancer_polykernel", (DL_FUNC) &_gpbalancer_polykernel, 5},
     {"_gpbalancer_par_ep", (DL_FUNC) &_gpbalancer_par_ep, 5},
     {"_gpbalancer_seq_ep", (DL_FUNC) &_gpbalancer_seq_ep, 5},
+    {"_gpbalancer_la_probit", (DL_FUNC) &_gpbalancer_la_probit, 4},
     {"_gpbalancer_par_sqexp", (DL_FUNC) &_gpbalancer_par_sqexp, 3},
     {NULL, NULL, 0}
 };
