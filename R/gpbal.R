@@ -87,12 +87,20 @@ gpbal <- function(X, y,
     ncov <- length(theta)
     cov_matrix <- cov_function(as.matrix(X), theta)
     ps_res <- gpbal_fixed(y, cov_matrix, verbose = F, tol = 1e-2, ep_vers=ep_vers)
-    ps_est <- pnorm(ps_res$PosteriorMean)
+    ps_est <- as.vector(pnorm(ps_res$PosteriorMean))
 
     if(tolower(wts_vers) =='ate'){
       ps_wts <- ifelse(y==1, 1/ps_est, 1/(1-ps_est))
     } else if(tolower(wts_vers) == 'att') {
       ps_wts <- ifelse(y==1, 1, ps_est/(1-ps_est))
+    } else if(tolower(wts_vers) == 'tatt'){
+      ps_mask <- ifelse((ps_est > 0.05) & (ps_est < 0.95), 1, 0)
+      ps_wts <- ifelse(y==1, ps_mask, ps_mask * ps_est/(1-ps_est) )
+    } else if(tolower(wts_vers) == 'ato'){
+      ps_wts <- ifelse(y==1, 1 - ps_est, ps_est)
+    } else if(tolower(wts_vers) == 'matching'){
+      min_ps <- apply(cbind(ps_est, 1-ps_est), 1, min)
+      ps_wts <- ifelse(y==1, min_ps/ps_est, min_ps/(1-ps_est))
     } else {
       message('invalid weighting scheme')
       return(NULL)
