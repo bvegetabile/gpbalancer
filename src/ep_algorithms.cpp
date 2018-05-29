@@ -238,12 +238,13 @@ List par_ep(arma::vec y,
   arma::mat T_mat = diagmat(cavity_tau);
   arma::mat S_tilde = diagmat(tilde_tau);
 
-  double terms_4_1 = 0.5*sum(log(1.0 + tilde_tau/cavity_tau)) - trace(log(L));
-  double terms_2_5quad = 0.5 * dot(tilde_nu, (sigma_mat * tilde_nu));
-  arma::mat C = chol(T_mat + S_tilde, "lower");
-  terms_2_5quad +=  arma::dot(tilde_nu, arma::solve(arma::trimatu(C.t()), arma::solve(arma::trimatl(C), tilde_nu)));
-  double terms_5remain = 0.5 * dot(cavity_mu, T_mat * inv_sympd(S_tilde + T_mat) * (S_tilde*cavity_mu - 2.0*tilde_nu));
-  double terms_3 = sum(log(big_z));
+  double terms_4_1 = 0.5*sum(log(1.0 + tilde_tau/cavity_tau)) - arma::trace(arma::log(L));
+  double terms_2_5quad = 0.5 * arma::dot(tilde_nu, (sigma_mat * tilde_nu));
+  arma::mat C = arma::chol(T_mat + S_tilde, "lower");
+  terms_2_5quad -=  arma::dot(tilde_nu, arma::solve(arma::trimatu(C.t()),
+                                                    arma::solve(arma::trimatl(C), tilde_nu)));
+  double terms_5remain = 0.5 * arma::dot(cavity_mu, T_mat * arma::inv_sympd(S_tilde + T_mat) * (S_tilde*cavity_mu - 2.0*tilde_nu));
+  double terms_3 = arma::sum(arma::log(big_z));
   //
   double log_Z_ep = terms_4_1 + terms_2_5quad + terms_5remain + terms_3;
   return(List::create(
