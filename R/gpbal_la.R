@@ -26,15 +26,15 @@ gpbal_la_fixed <- function(y, cov_matrix,
     message("Error: Algorithm requires two classes exactly")
     return()
   }
-#
-#   if(classes[1] == 0 && classes[2] == 1){
-#     y[y==0] = -1
-#     classes = sort(unique(y))
-#   } else if (classes[1] != -1 || classes[2] != 1){
-#     message("Error: Requires class labels -1 and 1 for Algorithm")
-#     message(paste('Classes found: ', toString(classes)))
-#     return()
-#   }
+
+  if(classes[1] == 0 && classes[2] == 1){
+    y[y==0] = -1
+    classes = sort(unique(y))
+  } else if (classes[1] != -1 || classes[2] != 1){
+    message("Error: Requires class labels -1 and 1 for Algorithm")
+    message(paste('Classes found: ', toString(classes)))
+    return()
+  }
 
   # Converting target inputs to a column vector
   y = matrix(y, nrow=n_obs, ncol=1)
