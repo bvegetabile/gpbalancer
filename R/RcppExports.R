@@ -25,8 +25,20 @@ seq_ep <- function(y, cov_matrix, tol, max_iters, verbose) {
     .Call(`_gpbalancer_seq_ep`, y, cov_matrix, tol, max_iters, verbose)
 }
 
+gp_mcla <- function(covmat, targets, n_classes, tol = 1e-10, max_iters = 20L, verbose = FALSE) {
+    .Call(`_gpbalancer_gp_mcla`, covmat, targets, n_classes, tol, max_iters, verbose)
+}
+
 la_probit <- function(targets, covmat, tol = 1e-2, max_iters = 20L) {
     .Call(`_gpbalancer_la_probit`, targets, covmat, tol, max_iters)
+}
+
+mc_sqexp_common <- function(X, inv_ls_vec, scale = 1.0, noise = 1e-6) {
+    .Call(`_gpbalancer_mc_sqexp_common`, X, inv_ls_vec, scale, noise)
+}
+
+mc_normpoly_common <- function(X, sig_shift, sig_scale, power = 1L, noise = 1e-6) {
+    .Call(`_gpbalancer_mc_normpoly_common`, X, sig_shift, sig_scale, power, noise)
 }
 
 par_sqexp <- function(design_x, vec_theta, sig_noise = 1e-6) {

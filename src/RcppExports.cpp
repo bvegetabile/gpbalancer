@@ -93,6 +93,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gp_mcla
+List gp_mcla(arma::mat covmat, arma::vec targets, int n_classes, double tol, int max_iters, bool verbose);
+RcppExport SEXP _gpbalancer_gp_mcla(SEXP covmatSEXP, SEXP targetsSEXP, SEXP n_classesSEXP, SEXP tolSEXP, SEXP max_itersSEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type covmat(covmatSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type targets(targetsSEXP);
+    Rcpp::traits::input_parameter< int >::type n_classes(n_classesSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iters(max_itersSEXP);
+    Rcpp::traits::input_parameter< bool >::type verbose(verboseSEXP);
+    rcpp_result_gen = Rcpp::wrap(gp_mcla(covmat, targets, n_classes, tol, max_iters, verbose));
+    return rcpp_result_gen;
+END_RCPP
+}
 // la_probit
 arma::vec la_probit(arma::vec targets, arma::mat covmat, double tol, int max_iters);
 RcppExport SEXP _gpbalancer_la_probit(SEXP targetsSEXP, SEXP covmatSEXP, SEXP tolSEXP, SEXP max_itersSEXP) {
@@ -104,6 +120,35 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     Rcpp::traits::input_parameter< int >::type max_iters(max_itersSEXP);
     rcpp_result_gen = Rcpp::wrap(la_probit(targets, covmat, tol, max_iters));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mc_sqexp_common
+arma::mat mc_sqexp_common(arma::mat X, arma::vec inv_ls_vec, double scale, double noise);
+RcppExport SEXP _gpbalancer_mc_sqexp_common(SEXP XSEXP, SEXP inv_ls_vecSEXP, SEXP scaleSEXP, SEXP noiseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type inv_ls_vec(inv_ls_vecSEXP);
+    Rcpp::traits::input_parameter< double >::type scale(scaleSEXP);
+    Rcpp::traits::input_parameter< double >::type noise(noiseSEXP);
+    rcpp_result_gen = Rcpp::wrap(mc_sqexp_common(X, inv_ls_vec, scale, noise));
+    return rcpp_result_gen;
+END_RCPP
+}
+// mc_normpoly_common
+arma::mat mc_normpoly_common(arma::mat X, arma::vec sig_shift, arma::vec sig_scale, int power, double noise);
+RcppExport SEXP _gpbalancer_mc_normpoly_common(SEXP XSEXP, SEXP sig_shiftSEXP, SEXP sig_scaleSEXP, SEXP powerSEXP, SEXP noiseSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type sig_shift(sig_shiftSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type sig_scale(sig_scaleSEXP);
+    Rcpp::traits::input_parameter< int >::type power(powerSEXP);
+    Rcpp::traits::input_parameter< double >::type noise(noiseSEXP);
+    rcpp_result_gen = Rcpp::wrap(mc_normpoly_common(X, sig_shift, sig_scale, power, noise));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -128,7 +173,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gpbalancer_polykernel", (DL_FUNC) &_gpbalancer_polykernel, 5},
     {"_gpbalancer_par_ep", (DL_FUNC) &_gpbalancer_par_ep, 5},
     {"_gpbalancer_seq_ep", (DL_FUNC) &_gpbalancer_seq_ep, 5},
+    {"_gpbalancer_gp_mcla", (DL_FUNC) &_gpbalancer_gp_mcla, 6},
     {"_gpbalancer_la_probit", (DL_FUNC) &_gpbalancer_la_probit, 4},
+    {"_gpbalancer_mc_sqexp_common", (DL_FUNC) &_gpbalancer_mc_sqexp_common, 4},
+    {"_gpbalancer_mc_normpoly_common", (DL_FUNC) &_gpbalancer_mc_normpoly_common, 5},
     {"_gpbalancer_par_sqexp", (DL_FUNC) &_gpbalancer_par_sqexp, 3},
     {NULL, NULL, 0}
 };
