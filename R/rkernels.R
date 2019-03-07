@@ -43,6 +43,8 @@ sqexp <- function(X, theta = rep(1, ncol(X)+1), sig_noise=0.000001){
   cov_mat <- construct_sqexp(X, M_inv, sig, sig_noise)
   return(cov_mat)
 }
+attributes(sqexp) <- list('ntheta' = 'ndim+1')
+
 
 sqexp_par <- function(X, theta = rep(1, ncol(X)+1), sig_noise=0.000001){
   # Main input is a variable called 'theta'.  The organization of the parameters
@@ -63,6 +65,7 @@ sqexp_par <- function(X, theta = rep(1, ncol(X)+1), sig_noise=0.000001){
   cov_mat <- par_sqexp(X, theta, sig_noise)
   return(cov_mat)
 }
+attributes(sqexp_par) <- list('ntheta' = 'ndim+1')
 
 sqexp_poly <- function(X, theta, noise = 1e-4){
   scale0 <- 1
@@ -77,6 +80,8 @@ sqexp_poly <- function(X, theta, noise = 1e-4){
 
   return(K1 + K2)
 }
+attributes(sqexp_poly)[['ntheta']] <- 2
+
 
 sqexp_poly2 <- function(X, theta, noise = 1e-4){
   scale0 <- 1
@@ -91,5 +96,5 @@ sqexp_poly2 <- function(X, theta, noise = 1e-4){
 
   return(K1 + K2)
 }
-
+attributes(sqexp_poly)[['ntheta']] <- 2
 

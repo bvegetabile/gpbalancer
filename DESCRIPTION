@@ -14,4 +14,4 @@ Imports:
     minqa
 LinkingTo: Rcpp, RcppArmadillo, RcppParallel
 SystemRequirements: C++11
-
+RoxygenNote: 6.1.0

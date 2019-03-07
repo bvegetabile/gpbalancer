@@ -1,7 +1,7 @@
 ---
 title: 'gpbalancer: Optimally Balanced Gaussian Process Propensity Score Estimation'
 author: "Brian Vegetabile"
-date: "11/17/2017"
+date: "3/7/2019"
 output: 
   md_document:
     variant: markdown_github
@@ -37,8 +37,6 @@ library('gpbalancer')
 ```
 
 ## Example using `gpbalancer`
-
-
 
 ### Simulating data
 
@@ -127,9 +125,6 @@ legend('topleft', c('Treated', 'Control'), lty=1, lwd=3, col=c(t_col, c_col), bg
 knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical))
 ```
 
-
-
-
 ### Visualizing the Potential Outcomes & Observed Responses
 
 Below are visualizations of the expectations of the potential response functions and the observed responses for the sample data.  
@@ -174,8 +169,8 @@ Using the above simulated data, we can now estimate the propensity score.  The r
 ```{r, echo=T, eval=T}
 est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov), 
                                    y = treatment_assignment, 
-                                   init_theta = c(1),
-                                   cov_function = gpbalancer::sqexp_par,
+                                   cov_function = gpbalancer::sqexp_poly,
+                                   init_theta = c(1, 1),
                                    verbose = T)
 ```
 

@@ -158,18 +158,18 @@ Using the above simulated data, we can now estimate the propensity score. The re
 ``` r
 est_propscore <- gpbalancer::gpbal(X = as.matrix(pretreatment_cov), 
                                    y = treatment_assignment, 
-                                   init_theta = c(1),
-                                   cov_function = gpbalancer::sqexp_par,
+                                   cov_function = gpbalancer::sqexp_poly,
+                                   init_theta = c(1, 1),
                                    verbose = T)
 ```
 
-    ## Starting Optimization  @   2017-11-27 18:31:27
+    ## Starting Optimization  @   2019-03-07 15:54:54
 
-    ## Finished Optimization  @   2017-11-27 18:36:44
+    ## Finished Optimization  @   2019-03-07 15:55:08
 
-    ## Time Difference          : 316.7918
+    ## Time Difference          : 14.046
 
-    ## Optimal Covariate Balance: 2.425e-05
+    ## Optimal Covariate Balance: 2e-08
 
 #### Visualizing the Estimated Propensity Score
 
@@ -208,9 +208,9 @@ est_wts <- ifelse(ta_logical, 1/est_propscore$ps, 1/(1-est_propscore$ps))
 knitr::kable(gpbalancer::bal_table(data.frame("Pretreatment Covariate" = pretreatment_cov), 1, ta_logical, est_wts))
 ```
 
-|                        |   NT|   MeanT|    VarT|   NC|   MeanC|    VarC|  StdDiff|  LogRatio|
-|------------------------|----:|-------:|-------:|----:|-------:|-------:|--------:|---------:|
-| Pretreatment.Covariate |  494|  0.0276|  0.9718|  506|  0.0252|  0.9634|   0.0024|    0.0043|
+|                        |   NT|   MeanT|    VarT|   NC|   MeanC|   VarC|  StdDiff|  LogRatio|
+|------------------------|----:|-------:|-------:|----:|-------:|------:|--------:|---------:|
+| Pretreatment.Covariate |  494|  0.0256|  0.9638|  506|  0.0255|  0.964|    1e-04|    -1e-04|
 
 ### Evaluating the Performance of the Optimally Balanced Gaussian Process Propensity Score
 
@@ -220,4 +220,4 @@ We now compare the method when there is no adjustment on the propensity score an
 |-----------------------|:--------:|:-----:|:-------:|:-------:|:------:|:-------------------:|:-----:|
 | No Adjustment         |   3.427  | 0.075 |  3.280  |  3.574  |  0.427 |          -          | 0.188 |
 | True Propensity Score |   2.877  | 0.111 |  2.660  |  3.095  | -0.123 |        71.242       | 0.027 |
-| Opt Bal GP Prop Score |   2.942  | 0.101 |  2.745  |  3.139  | -0.058 |        86.408       | 0.013 |
+| Opt Bal GP Prop Score |   2.932  | 0.100 |  2.735  |  3.129  | -0.068 |        84.089       | 0.015 |

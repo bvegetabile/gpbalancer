@@ -16,13 +16,13 @@ arma::vec snc(arma::vec X){
   arma::vec F = 0.5 * ( 1.0 + arma::erf(X / std::sqrt(2.0)));
   return(F);
 }
-//
 
 // [[Rcpp::export]]
-arma::vec la_probit(arma::vec targets,
-                    arma::mat covmat,
+arma::vec la_probit(arma::vec& targets,
+                    arma::mat& covmat,
                     double tol=1e-2,
-                    int max_iters = 20){
+                    int max_iters = 20,
+                    bool verbose = false){
   double n_obs = targets.n_elem;
 
   arma::vec f(n_obs, arma::fill::zeros);
@@ -40,7 +40,9 @@ arma::vec la_probit(arma::vec targets,
   int i = 1;
   while(arma::mean(arma::abs(f-f_old)) >= tol){
     f_old = f;
-    // std::cout << "Iter :" << i << "\n";
+
+    if(verbose) std::cout << "Iter :" << i << "\n";
+
     hess_vec = arma::pow(snd(f) / snc(targets % f), 2) + targets % f % snd(f) / snc(targets % f);
     grad_vec = targets % snd(f) / snc(targets % f);
     W.diag() = hess_vec;

@@ -1,4 +1,35 @@
-gpbal_la_fixed <- function(y, cov_matrix,
+#' Compute posterior approximation given observed treatment assignments and a fixed covariance matrix
+#'
+#' @param y Set of observed treatment assignments (y \in (0,1))
+#' @param cov_matrix Covariance matrix; for examples, see \code{sqexp} or similar
+#' @param tol Tolerance of EP Algorithm.  Difference between the latent scores at each iteration - default 1e-2
+#' @param max_iters Maximum number of iterations of the EP Algorithm - default 20
+#' @param verbose Decision to print progress to screen - default TRUE
+#' @return Object that contains the weights obtained from the balancing procedure and parameters from the optimization procedure
+#'
+#' The object that is returned is a list that contains the following entries
+#' \itemize{
+#' \item{ \code{Number_Iters} - Number of iterations for algorithm}
+#' \item{ \code{PosteriorMean} - Posterior mean of latent scores}
+#' \item{ \code{PosteriorVar} - Posterior covariance of latent scores}
+#' \item{ \code{tilde_nu} - }
+#' \item{ \code{tilde_tau} - }
+#' \item{ \code{log_Z_ep} - EP Approximation to Log Likelihood}
+#' \item{ \code{ComputationTime} - Runtime of EP algorithm for fixed covariance matrix}
+#' \item{ \code{ps} - Probit transformed posterior mean}
+#' }
+#' @examples
+#' n_obs <- 500
+#' X1 <- rnorm(n_obs)
+#' X2 <- rnorm(n_obs)
+#' p <- pnorm( 0.5 * X1 + 0.5 * X2 )
+#' TA <- rbinom(n_obs, 1, p)
+#' dat <- data.frame(X1 = X1, X2 = X2, TA = TA)
+#' covmat <- sqexp(cbind(X1, X2))
+#' system.time(res <- gpbal_la_fixed(TA, covmat))
+#' plot(res$ps, p, pch = 19, col = rgb(0,0,0,0.5))
+gpbal_la_fixed <- function(y,
+                           cov_matrix,
                            tol=1e-2,
                            max_iters=20,
                            verbose = T){
