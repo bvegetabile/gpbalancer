@@ -53,10 +53,14 @@ gpbal <- function(X, y,
 
   if(is.null(init_theta)){
     if(is.null(attributes(cov_function)[['ntheta']])){
-      stop('See supplied covariance function to how many parameters are needed for init_theta')
+      stop('See supplied covariance function to learn how many parameters are needed for init_theta')
     } else {
-      init_theta <- rep(1, attr(cov_function, 'ntheta'))
+      if(attributes(cov_function)[['ntheta']] == 'ndim+1'){
+        init_theta <- rep(1, ncol(X) + 1)
+      } else {
+        init_theta <- rep(1, attr(cov_function, 'ntheta'))
       }
+    }
   }
 
 

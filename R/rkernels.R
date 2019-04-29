@@ -80,7 +80,8 @@ sqexp_poly <- function(X, theta, noise = 1e-4){
 
   return(K1 + K2)
 }
-attributes(sqexp_poly)[['ntheta']] <- 2
+# attributes(sqexp_poly)[['ntheta']] <- 2
+attributes(sqexp_poly) <- list('ntheta' = 2)
 
 
 sqexp_poly2 <- function(X, theta, noise = 1e-4){
@@ -96,5 +97,7 @@ sqexp_poly2 <- function(X, theta, noise = 1e-4){
 
   return(K1 + K2)
 }
-attributes(sqexp_poly)[['ntheta']] <- 2
+# attributes(sqexp_poly)[['ntheta']] <- 2
+attributes(sqexp_poly2) <- list('ntheta' = 2)
+
 
