@@ -4,14 +4,14 @@
 \alias{gpbal}
 \title{Compute optimally balanced Gaussian process propensity scores}
 \usage{
-gpbal(X, y, cov_function, init_theta, verbose = F,
+gpbal(X, y, cov_function, init_theta = NULL, verbose = F,
   balance_metric = "mom_sq", approx_method = "ep",
   ep_vers = "parallel", estimand = "ATE", eta = 0.05, tol = 0.01)
 }
 \arguments{
 \item{X}{Matrix of covariates to be included in the analysis and balanced on}
 
-\item{y}{Set of observed treatment assignments (y \in (0,1))}
+\item{y}{Set of observed treatment assignments (y in (0,1))}
 
 \item{cov_function}{Covariance matrix; for examples, see \code{sqexp} or similar}
 
@@ -35,6 +35,7 @@ The object that is returned is a list that contains the following entries
 \item{ \code{tilde_tau} - }
 \item{ \code{log_Z_ep} - EP Approximation to Log Likelihood}
 \item{ \code{ComputationTime} - Runtime of EP algorithm for fixed covariance matrix}
+\item{ \code{thetas} - optimal theta from optimization routine}
 \item{ \code{ps} - Probit transformed posterior mean}
 }
 }

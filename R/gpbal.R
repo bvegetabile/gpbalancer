@@ -1,7 +1,7 @@
 #' Compute optimally balanced Gaussian process propensity scores
 #'
 #' @param X Matrix of covariates to be included in the analysis and balanced on
-#' @param y Set of observed treatment assignments (y \in (0,1))
+#' @param y Set of observed treatment assignments (y in (0,1))
 #' @param cov_function Covariance matrix; for examples, see \code{sqexp} or similar
 #' @param tol Tolerance of algorithms.  Difference between the latent scores at each iteration - default 1e-2
 #' @param max_iters Maximum number of iterations of algorithm - default 20

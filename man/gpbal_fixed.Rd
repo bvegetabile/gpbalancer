@@ -8,7 +8,7 @@ gpbal_fixed(y, cov_matrix, tol = 0.01, max_iters = 20, verbose = T,
   approx_method = "ep", ep_vers = "parallel")
 }
 \arguments{
-\item{y}{Set of observed treatment assignments (y \in (0,1))}
+\item{y}{Set of observed treatment assignments (y in (0,1))}
 
 \item{cov_matrix}{Covariance matrix; for examples, see \code{sqexp} or similar}
 

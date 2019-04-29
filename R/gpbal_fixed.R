@@ -1,6 +1,6 @@
 #' Compute posterior approximation given observed treatment assignments and a fixed covariance matrix
 #'
-#' @param y Set of observed treatment assignments (y \in (0,1))
+#' @param y Set of observed treatment assignments (y in (0,1))
 #' @param cov_matrix Covariance matrix; for examples, see \code{sqexp} or similar
 #' @param tol Tolerance of algorithms.  Difference between the latent scores at each iteration - default 1e-2
 #' @param max_iters Maximum number of iterations of the algorithm - default 20
